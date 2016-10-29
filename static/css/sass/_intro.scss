@@ -1,0 +1,59 @@
+#introScreen {
+  text-align: center;
+
+  #videoOverlay {
+    background-color: rgba(0,0,0,0.2);
+    height: 100%;
+    width: 100%;
+    z-index: -1;
+    position: fixed;
+  }
+
+  #background {
+    height: 100%;
+    width: 100%;
+    z-index: -2;
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    video {
+      min-width: 100vw;
+      min-height: 100vh;
+    }
+  }
+
+  #introText {
+    color: white;
+
+    #wifiDetected, #wifiConnected, #chooseInput {
+      display: none;
+    }
+
+    #chooseInput {
+      a {
+        padding: 10px 30px;
+        border-radius: 10px;
+        background-color: transparent;
+        border: 1px solid white;
+        color: white;
+        font-size: 15px;
+        margin-right: 20px;
+        text-decoration: none;
+
+        &:last-of-type {
+          margin-right: 0;
+        }
+
+        &:hover {
+          background-color: white;
+          color: black;
+          cursor: pointer;
+          transition: background-color 1s;
+        }
+      }
+    }
+
+    padding-top: 100px;
+  }
+}

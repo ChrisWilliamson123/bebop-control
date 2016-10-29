@@ -1,0 +1,44 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drone Keyboard</title>
+
+    <link rel="stylesheet" type="text/css" href="static/css/main.css">
+</head>
+
+<body>
+    <div id="introScreen">
+        <div id="videoOverlay"></div>
+
+        <div id="background">
+            <video playsinline autoplay muted loop>
+                <source src="static/video/UniFlyover.mp4" poster="static/img/ManchesterUni.jpg" type="video/mp4">
+            </video>
+        </div>
+        <div id="introText">
+            <div id="welcome">
+                <h1>Waiting for Bebop 2 WiFi signal...</h1>
+                <h2>If you haven't already, please power on your drone.</h2>
+            </div>
+            <div id="wifiDetected">
+                <h1><span id="droneWifiName"></span> WiFi network detected.</h1>
+                <h2>Connecting now...</h2>
+            </div>
+            <div id="chooseInput">
+                <h1>WiFi connection established</h1>
+                <h2>Which input device are you using?</h2>
+                <a href="/xbox-controller" id="xbox-controller">Xbox controller</a>
+                <a href="/leap" id="leap-motion">Leap Motion</a>
+                <a href="/keyboard" id="keyboard">Keyboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io('http://localhost:8001');
+    </script>
+    <script src="static/js/jquery.min.js"></script>
+    <script src="static/js/introSocketController.js"></script>
+</body>
+</html>

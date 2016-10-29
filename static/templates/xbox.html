@@ -1,0 +1,79 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Drone Keyboard</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/main.css">
+        <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
+    </head>
+
+    <body id="xbox">
+        <div id="main">
+            <div id="connection-status">
+                <p>Controller: <span id="controller" class="connected">Connected</span> | Drone: <span id="drone" class="disconnected">Disconnected</span></p>
+            </div>
+
+            <div id="battery">Battery: <span>waiting...</span></div>
+            <div id="altitude">Distance: <span id="distance">0</span>m</div>
+
+            <div id="speed">
+                <p>
+                    <label for="amount">Drone speed:</label>
+                    <span id="amount"></span>
+                </p>
+
+                <div id="slider"></div>
+            </div>
+
+            <div id="wifi">
+                <label for="wifiStrength">WiFi strength</label>
+                <div id="wifiStrength"></div>
+            </div>
+
+            <div id="left-trigger"><div class="fill"></div></div>
+            <div id="right-trigger"><div class="fill"></div></div>
+            <div id="left-stick"><div class="center"></div></div>
+            <div id="right-stick"><div class="center"></div></div>
+
+            <div id="chart"></div>
+        </div>
+
+        <div id="help">
+            <h1>Help</h1>
+            <div id="controlList">
+                <h2>Controls</h2>
+                <ul>
+                    <li>Start: Connect to the drone (assuming WiFi connection to drone is active)</li>
+                    <li>A: Takeoff</li>
+                    <li>B: Land</li>
+                    <li>Left stick: Move in the xy plane</li>
+                    <li>Right stick: Rotate clockwise/anti-clockwise</li>
+                    <li>Left trigger: Down (at specified speed)</li>
+                    <li>Right trigger: Up (at specified speed)</li>
+                    <li>D-Pad: Adjust camera tilt/pan</li>
+                    <li>X: Show help screen</li>
+                </ul>
+            </div>
+        </div>
+
+        <script>
+            var lastAltitude = 0;
+            var lastSpeed = 0;
+            var graphTick = '';
+        </script>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io('http://localhost:8001');
+        </script>
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/jquery-ui.js"></script>
+        <script src="static/js/misc.js"></script>
+        <script src="static/js/video-client-bundle.js"></script>
+        <script src="static/js/d3.min.js"></script>
+        <script src="static/js/c3.min.js"></script>
+        <script src="static/js/graphs.js"></script>
+        <script src="static/js/xboxSocketController.js"></script>
+    </body>
+</html>
