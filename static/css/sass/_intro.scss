@@ -1,6 +1,10 @@
 #introScreen {
   text-align: center;
 
+  h1, h2, h3, p {
+    font-weight: lighter;
+  }
+
   #videoOverlay {
     background-color: rgba(0,0,0,0.2);
     height: 100%;
@@ -35,11 +39,12 @@
         padding: 10px 30px;
         border-radius: 10px;
         background-color: transparent;
-        border: 1px solid white;
+        border: 2px solid white;
         color: white;
         font-size: 15px;
         margin-right: 20px;
         text-decoration: none;
+        font-weight: bold;
 
         &:last-of-type {
           margin-right: 0;

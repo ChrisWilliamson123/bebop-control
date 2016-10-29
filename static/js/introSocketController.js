@@ -11,6 +11,12 @@ socket.on('droneWifiConnected', function(wifiName) {
     // Hide wifi detected div and show connected header
     $('#welcome').hide();
     $('#wifiDetected').hide();
+    $('#wifiConnected').show();
+});
+
+socket.on('appConnectedToDrone', function() {
+    $('#welcome').hide();
+    $('#wifiConnected').hide();
     $('#chooseInput').show();
 });
 

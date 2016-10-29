@@ -23,11 +23,12 @@ http.listen(8001, function() {
 });
 
 function connectDrone() {
-    drone.connect(function() {console.log('Drone connected.')});
+    drone.connect(function() {
+        io.emit('appConnectedToDrone');
+    });
 }
 
 io.on('connection', function (socket) {
-    console.log('Socket set up');
     socket.on('appInitialised', function() {
         // Initialise the wifi module, passing in our socket and our wifiEvent listener
         wifi.init(socket, wifiEvents);
@@ -35,6 +36,7 @@ io.on('connection', function (socket) {
         wifi.connectDroneWifi();
         // Once we have connected to the drone's wifi, connect the app to the drone
         wifiEvents.on('connectDrone', function() {
+            wifiConnection = true;
             connectDrone();
         });
     });
@@ -44,4 +46,25 @@ io.on('connection', function (socket) {
         var xbox = require('./xboxController');
         xbox.init(drone, socket);
     });
+});
+
+// The following will catch uncaught exceptions.
+// For example, if we disconnect the WiFi or try to make too many connections to the drone
+var handlingUnreachable = false;
+process.on('uncaughtException', function(err) {
+    // handle the error safely
+    if (err.code == 'ENETUNREACH' && !handlingUnreachable) {
+        handlingUnreachable = true;
+        // Drone is unreachable
+        console.log('Network changed / Drone is unreachable');
+        // Initialise the wifi module, passing in our socket and our wifiEvent listener
+        wifi.init(io, wifiEvents);
+        // Start the process of searching and connecting to the drone's wifi
+        wifi.connectDroneWifi();
+        // Once we have connected to the drone's wifi, connect the app to the drone
+        wifiEvents.on('connectDrone', function() {
+            connectDrone();
+            handlingUnreachable = false;
+        });
+    }
 });

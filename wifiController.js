@@ -56,6 +56,7 @@ function connectToNetwork(SSID) {
             socket.emit('droneWifiConnected');
             setTimeout(function() {
                 events.emit('connectDrone');
+                socket.emit('appConnectedToDrone');
             }, 2000);
         }
     });
