@@ -67,6 +67,44 @@ function saveCalibrationValue(palmCoords, calibrationDirection) {
     console.log(calibrationValues);
 }
 
+function checkZoneConfirmation(frame, hand) {
+    $('#grabIndicator').text(Math.round(hand.grabStrength));
+    if (grabTracker.enabled && frame.id >= grabTracker.endFrame) {
+        // Grab gesture is complete so save value
+        console.log(hand.palmPosition);
+        saveCalibrationValue(hand.palmPosition, calibrationDirections[calibrationIndex]);
+        calibrationIndex++;
+        if (calibrationIndex == calibrationDirections.length) {
+            // Calibration is finished
+            console.log('Calibration finished');
+            $('#calibrationPopup #mainContent').fadeOut(2000);
+            $('#calibrationComplete').fadeIn(2000);
+            setTimeout(function() {
+                magnificPopup.close();
+                applyZoneCSS();
+                $('#calibrationPopup #mainContent').show();
+                $('#calibrationComplete').hide();
+            }, 6000);
+            calibrationIndex = 0;
+            calibrationTime = false;
+        }
+        $('#calibrationGridContainer img').attr('src', 'static/img/' + calibrationDirections[calibrationIndex] + '.gif');
+        resetGrabTracker();
+        $('#calibrationDirection').text(calibrationDirections[calibrationIndex]);
+    }
+    else if (grabTracker.enabled && hand.grabStrength < 0.9) {
+        // Reset the tracker
+        resetGrabTracker();
+    }
+    else if (!grabTracker.enabled && hand.grabStrength >= 0.9) {
+        console.log('Starting grab tracker');
+        // Start the tracker
+        grabTracker.enabled = true;
+        grabTracker.startFrame = frame.id;
+        grabTracker.endFrame = frame.id + (leapFPS * 3);
+    }
+}
+
 
 Leap.loop({enableGestures: true}, function(frame) {
     var handCount = frame.hands.length;
@@ -106,38 +144,7 @@ Leap.loop({enableGestures: true}, function(frame) {
         $('#heightSlider').slider('value', heightPercentage);
         // console.log(hand.palmPosition);
         if (calibrationTime) {
-            if (grabTracker.enabled && frame.id >= grabTracker.endFrame) {
-                // Grab gesture is complete so save value
-                console.log(hand.palmPosition);
-                saveCalibrationValue(hand.palmPosition, calibrationDirections[calibrationIndex]);
-                calibrationIndex++;
-                resetGrabTracker();
-                if (calibrationIndex == calibrationDirections.length) {
-                    // Calibration is finished
-                    console.log('Calibration finished');
-                    $('#calibrationPopup #mainContent').fadeOut();
-                    $('#calibrationComplete').fadeIn();
-                    setTimeout(function() {
-                        magnificPopup.close();
-                        applyZoneCSS();
-                    }, 6000);
-                    calibrationIndex = 0;
-                    calibrationTime = false;
-
-                }
-                $('#calibrationDirection').text(calibrationDirections[calibrationIndex]);
-            }
-            else if (grabTracker.enabled && hand.grabStrength < 0.9) {
-                // Reset the tracker
-                resetGrabTracker();
-            }
-            else if (!grabTracker.enabled && hand.grabStrength >= 0.9) {
-                console.log('Starting grab tracker');
-                // Start the tracker
-                grabTracker.enabled = true;
-                grabTracker.startFrame = frame.id;
-                grabTracker.endFrame = frame.id + (leapFPS * 3);
-            }
+            checkZoneConfirmation(frame, hand);
         }
     });
 

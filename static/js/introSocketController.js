@@ -15,7 +15,6 @@ socket.on('droneWifiConnected', function(wifiName) {
 });
 
 socket.on('appConnectedToDrone', function() {
-    $('#welcome').hide();
     $('#wifiConnected').hide();
     $('#chooseInput').show();
 });
