@@ -24,3 +24,14 @@ $('#wifiStrength').slider({
     orientation: 'vertical'
 });
 $("#slider .ui-slider-handle").unbind('keydown');
+
+$('#heightSlider').slider({
+    value:0,
+    min: 0,
+    max: 100,
+    step: 1,
+    range: 'min',
+    orientation: 'vertical'
+});
+$("#heightSlider .ui-slider-handle").unbind('keydown');
+

@@ -18,6 +18,9 @@ app.get('/', function (req, res) {
 app.get('/xbox-controller', function (req, res) {
     res.sendFile('static/templates/xbox.html', { root: __dirname });
 });
+app.get('/leap', function (req, res) {
+    res.sendFile('static/templates/leap.html', { root: __dirname });
+});
 http.listen(8001, function() {
     console.log("Listening on port 8001");
 });

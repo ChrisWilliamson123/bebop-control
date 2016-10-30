@@ -1,0 +1,57 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leap - Bebop Control</title>
+    <link rel="stylesheet" href="static/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
+</head>
+<body>
+<a href="#calibrationPopup" class="open-popup" id="calibrate">Calibrate Zones</a>
+
+<div id="leapGrid">
+    <div id="left" class="zone"></div>
+    <div id="right" class="zone"></div>
+    <div id="forward" class="zone"></div>
+    <div id="backward" class="zone"></div>
+</div>
+
+<div id="handHeight">
+    <div id="heightSlider"></div>
+    <div id="upIndicator" class="movementIndicator"></div>
+    <div id="downIndicator" class="movementIndicator"></div>
+</div>
+
+<div id="calibrationPopup" class="mfp-hide">
+    <div id="mainContent">
+        <h2>Welcome to the calibration wizard</h2>
+        <p>The grid below represents the space that the Leap Motion can detect.</p>
+        <p>If your right hand is in view of the Leap, it will appear as a black dot inside the grid.</p>
+        <p>When the calibration direction changes, move your hand to the position that accompanies that movement, for example, if the direction is forward, you would move your hand forward.</p>
+        <p>Once you have reached your desired position, make a fist for 3 seconds and your choice will be confirmed.</p>
+        <h2>Calibration Zone: <span id="calibrationDirection"></span></h2>
+        <div id="calibrationGrid">
+        </div>
+    </div>
+    <div id="calibrationComplete">
+        <h2>Calibration complete</h2>
+        <p>You will now be returned to the main page, where your new calibration will be applied.</p>
+    </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io('http://localhost:8001');
+    socket.on('test', function (data) {
+        console.log(data);
+    });
+</script>
+<script src="static/js/jquery.min.js"></script>
+<script src="static/js/jquery-ui.js"></script>
+<script src="static/js/magnificPopup.min.js"></script>
+<script src="static/js/leap-api.js"></script>
+<script src="static/js/leap-plugins.js"></script>
+<script src="static/js/leapController.js"></script>
+<script src="static/js/sliders.js"></script>
+</body>
+</html>

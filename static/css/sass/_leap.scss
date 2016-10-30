@@ -1,0 +1,120 @@
+#leapGrid, #calibrationGrid {
+  width: 400px;
+  height: 350px;
+  border: 1px solid black;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  #handDot, #calibrationDot {
+    width: 5px;
+    height: 5px;
+    background-color: black;
+  }
+
+  .zone {
+    position: absolute;
+    border: 1px solid black;
+  }
+
+  #left, #right {
+    height: 100%;
+    transition: width 3s;
+  }
+
+  #forward, #backward {
+    width: 100%;
+    transition: height 3s;
+  }
+
+  #left {
+    left: 0;
+  }
+
+  #right {
+    right: 0;
+  }
+
+  #forward {
+    top: 0;
+  }
+
+  #backward {
+    bottom: 0;
+  }
+}
+
+#handHeight {
+  position: absolute;
+  right: 400px;
+
+  #heightSlider {
+    height: 875px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid black;
+
+    div.ui-slider-range {
+      background-color: black;
+      border-radius: 0;
+    }
+
+    span {
+      display: none;
+    }
+  }
+
+  .movementIndicator {
+    position: absolute;
+    height: 2px;
+    width: 30px;
+    background: black;
+    left: 15px;
+  }
+
+  #upIndicator {
+    top: 20%;
+  }
+
+  #downIndicator {
+    top: 80%;
+  }
+}
+
+#calibrationPopup {
+  width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px 10px;
+  border-radius: 10px;
+  text-align: center;
+
+  h2 {
+    margin: 0;
+  }
+
+  button {
+    margin: 0 auto;
+    font-size: 20px;
+    background: black;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 10px 30px;
+    
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  
+  #calibrationComplete {
+    display: none;
+  }
+}
+
+#calibrationGrid {
+  transform: none;
+  margin: 0 auto;
+  position: relative;
+  left: 0;
+}
