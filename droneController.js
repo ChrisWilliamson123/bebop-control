@@ -40,13 +40,16 @@ Number.prototype.toRad = function() {
     return this * Math.PI / 180;
 };
 
-var droneController = function(socket) {
+var droneController = function(socketInstance) {
     controller = this;
 
-    this.socket = socket;
+    socket = socketInstance;
 
-    this.bebop = require('node-bebop');
-    this.drone = this.bebop.createClient();
+    bebop = require('node-bebop');
+    // Used this. so that it can be referenced by the initiator file
+    this.drone = bebop.createClient();
+    // Used just 'drone' here so that events below are more readable
+    drone = this.drone;
 
     this.recording = false;
     this.droneOrigin = '';
@@ -58,23 +61,23 @@ var droneController = function(socket) {
     this.panTiltStep = 10;
 
     emitBattery = function() {
-        socket.emit('battery', this.drone.navData['battery']);
+        socket.emit('battery', drone.navData['battery']);
     };
 
-    this.drone.on('takingOff', function() {
+    drone.on('takingOff', function() {
         socket.emit('takingOff');
     });
 
-    this.drone.on('landing', function() {
+    drone.on('landing', function() {
         socket.emit('landing');
         controller.drone.MediaStreaming.videoEnable(0);
     });
 
-    this.drone.on('AltitudeChanged', function(data) {
+    drone.on('AltitudeChanged', function(data) {
         socket.emit('altitude', Math.round(data.altitude));
     });
 
-    this.drone.on('WifiSignalChanged', function(data) {
+    drone.on('WifiSignalChanged', function(data) {
         var strength = data.rssi;
         // The normal wifi range is -80 to -20 where -80 is weak and -20 is strong
         // Here we will get that from -60 to 0
@@ -83,14 +86,14 @@ var droneController = function(socket) {
         socket.emit('wifiStrength', strength);
     });
 
-    this.drone.on('HomeChanged', function(data) {
+    drone.on('HomeChanged', function(data) {
         controller.droneOrigin = {
             'lat': data.latitude,
             'lng': data.longitude
         }
     });
 
-    this.drone.on('PositionChanged', function(data) {
+    drone.on('PositionChanged', function(data) {
         if (controller.droneOrigin !== '') {
             var newCoords = {
                 'lat': data.latitude,
@@ -101,7 +104,7 @@ var droneController = function(socket) {
         }
     });
 
-    this.drone.on('SpeedChanged', function(data) {
+    drone.on('SpeedChanged', function(data) {
         // We need to figure out which direction the drone is going, z plane or xy plane
         var xyPlaneSpeed = Math.sqrt(Math.pow(Math.abs(data.speedX), 2) + Math.pow(Math.abs(data.speedY), 2));
         var zPlaneSpeed = Math.abs(data.speedZ);
@@ -109,11 +112,11 @@ var droneController = function(socket) {
         socket.emit('speedChange', Math.round(Math.max(xyPlaneSpeed, zPlaneSpeed)));
     });
 
-    this.drone.on('video', function (data) {
+    drone.on('video', function (data) {
         socket.emit('data', data.toString('base64'));
     });
 
-    this.drone.on('VideoEnableChanged', function(data) {
+    drone.on('VideoEnableChanged', function(data) {
         if (data.enabled == 'enabled') {
             controller.recording = true;
             console.log('Drone is recording.');
@@ -128,11 +131,11 @@ var droneController = function(socket) {
         emitBattery();
     }, 10000);
 
-    this.drone.connect(function() {
+    drone.connect(function() {
         console.log('Drone connected');
     });
 
-    this.socket.on('defaultSpeedChange', function(newSpeed) {
+    socket.on('defaultSpeedChange', function(newSpeed) {
         controller.speed = newSpeed;
     });
 };
