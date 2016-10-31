@@ -36,6 +36,20 @@ var calibrationValues = {
     calibrationIndex = 0,
     magnificPopup = $.magnificPopup.instance;
 
+var controller = new Leap.Controller();
+controller.on('deviceStreaming', function() {
+    console.log("A Leap device has been connected.");
+    $('#controller').addClass('connected');
+    $('#controller').text('Connected');
+});
+
+controller.on('deviceStopped', function() {
+    console.log("A Leap device has been disconnected.");
+    $('#controller').removeClass('connected');
+    $('#controller').text('Disconnected');
+});
+controller.connect();
+
 function applyZoneCSS() {
     $('#left').width(210 + calibrationValues['left']);
     $('#right').width(210 - calibrationValues['right']);

@@ -7,7 +7,28 @@
     <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
 </head>
 <body>
+<div id="connection-status">
+    <p>Leap: <span id="controller" class="connected">Connected</span> | Drone: <span id="drone" class="disconnected">Disconnected</span></p>
+</div>
+
+<div id="battery">Battery: <span>waiting...</span></div>
+<div id="altitude">Distance: <span id="distance">0</span>m</div>
+
 <a href="#calibrationPopup" class="open-popup" id="calibrate">Calibrate Zones</a>
+
+<div id="speed">
+    <p>
+        <label for="amount">Drone speed:</label>
+        <span id="amount"></span>
+    </p>
+
+    <div id="slider"></div>
+</div>
+
+<div id="wifi">
+    <label for="wifiStrength">WiFi strength</label>
+    <div id="wifiStrength"></div>
+</div>
 
 <div id="leapGrid">
     <div id="left" class="zone"></div>
@@ -21,6 +42,8 @@
     <div id="upIndicator" class="movementIndicator"></div>
     <div id="downIndicator" class="movementIndicator"></div>
 </div>
+
+<div id="chart"></div>
 
 <div id="calibrationPopup" class="mfp-hide">
     <div id="mainContent">
@@ -43,6 +66,11 @@
     </div>
 </div>
 
+<script>
+    var lastAltitude = 0;
+    var lastSpeed = 0;
+    var graphTick = '';
+</script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io('http://localhost:8001');
@@ -57,5 +85,6 @@
 <script src="static/js/leap-plugins.js"></script>
 <script src="static/js/leapController.js"></script>
 <script src="static/js/sliders.js"></script>
+<script src="static/js/globalSocketController.js"></script>
 </body>
 </html>

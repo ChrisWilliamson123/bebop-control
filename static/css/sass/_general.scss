@@ -3,3 +3,99 @@ body {
   font-size: 20px;
   margin: 0;
 }
+
+#connection-status {
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+
+  p {
+    margin: 0;
+  }
+
+  span {
+    color: red;
+
+    &.connected {
+      color: lightgreen;
+    }
+  }
+}
+
+#battery {
+  position: absolute;
+  left: 10px;
+}
+
+#altitude {
+  position: absolute;
+  right: 10px;
+}
+
+#speed {
+  width: 250px;
+  text-align: center;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+  top: 50px;
+
+  #slider {
+    border: 1px solid black;
+
+    span {
+      background-color: white;
+      border: 1px solid black;
+
+      &:focus {
+        outline: 0;
+      }
+
+      &.ui-state-active {
+        background-color: white;
+        border: 1px solid black;
+      }
+    }
+
+    div.ui-slider-range {
+      background-color: black;
+    }
+  }
+}
+
+#wifi {
+  position: absolute;
+  top: 70px;
+  left: 10px;
+
+  #wifiStrength {
+    height: 250px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 20px;
+    border: 1px solid black;
+
+    div.ui-slider-range {
+      background-color: black;
+      border-radius: 0;
+    }
+
+    span {
+      display: none;
+    }
+  }
+}
+
+#chart {
+  position: absolute!important;
+  bottom: 0 !important;
+  width: 98vw;
+}

@@ -9043,7 +9043,6 @@ var toUint8Array = function (parStr) {
 };
 
 socket.on('data', function (data) {
-    console.log('video data received');
     player.decode(toUint8Array(data));
 });
 },{"./node_modules/broadway-player/Player/Player":7,"socket.io-client":35}],49:[function(require,module,exports){
