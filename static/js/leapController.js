@@ -34,6 +34,7 @@ var calibrationValues = {
         'down'
     ],
     calibrationIndex = 0,
+    waitingForOpenHand = false;
     magnificPopup = $.magnificPopup.instance;
 
 var controller = new Leap.Controller();
@@ -55,67 +56,95 @@ function applyZoneCSS() {
     $('#right').width(210 - calibrationValues['right']);
     $('#forward').height(185 + calibrationValues['forward']);
     $('#backward').height(185 - calibrationValues['backward']);
+    var upPercentage = Math.round(((calibrationValues['up'] - 50) / 350) * 100);
+    var downPercentage = Math.round(((calibrationValues['down'] - 50) / 350) * 100);
+    $('#upIndicator').css('top', 100-upPercentage + '%');
+    $('#downIndicator').css('bottom', downPercentage + '%');
 }
 
-// Apply initial zone CSS
-applyZoneCSS();
-
 function resetGrabTracker() {
-    console.log('Resetting grab tracker');
     grabTracker.enabled = false;
     grabTracker.startFrame = 0;
     grabTracker.endFrame = 0;
 }
 
 function saveCalibrationValue(palmCoords, calibrationDirection) {
-    console.log(calibrationIndex);
-    if (calibrationDirection == 'left' || calibrationDirection == 'right') {
-        calibrationValues[calibrationDirection] = Math.round(palmCoords[0]);
+    console.log(calibrationDirection);
+    switch (calibrationDirection) {
+        case 'left':
+        case 'right':
+            calibrationValues[calibrationDirection] = Math.round(palmCoords[0]);
+            break;
+        case 'forward':
+        case 'backward':
+            calibrationValues[calibrationDirection] = Math.round(palmCoords[2]);
+            break;
+        default:
+            calibrationValues[calibrationDirection] = Math.round(palmCoords[1]);
     }
-    else if (calibrationDirection == 'forward' || calibrationDirection == 'backward') {
-        calibrationValues[calibrationDirection] = Math.round(palmCoords[2]);
-    }
-    else {
-        calibrationValues[calibrationDirection] = Math.round(palmCoords[1]);
-    }
-    console.log(calibrationValues);
 }
 
 function checkZoneConfirmation(frame, hand) {
-    $('#grabIndicator').text(Math.round(hand.grabStrength));
-    if (grabTracker.enabled && frame.id >= grabTracker.endFrame) {
-        // Grab gesture is complete so save value
-        console.log(hand.palmPosition);
-        saveCalibrationValue(hand.palmPosition, calibrationDirections[calibrationIndex]);
-        calibrationIndex++;
-        if (calibrationIndex == calibrationDirections.length) {
-            // Calibration is finished
-            console.log('Calibration finished');
-            $('#calibrationPopup #mainContent').fadeOut(2000);
-            $('#calibrationComplete').fadeIn(2000);
-            setTimeout(function() {
-                magnificPopup.close();
-                applyZoneCSS();
-                $('#calibrationPopup #mainContent').show();
-                $('#calibrationComplete').hide();
-            }, 6000);
-            calibrationIndex = 0;
-            calibrationTime = false;
+
+    if (waitingForOpenHand && hand.grabStrength < 0.9) {
+        waitingForOpenHand = false;
+    }
+
+    if (!waitingForOpenHand) {
+        if (grabTracker.enabled && frame.id >= grabTracker.endFrame) {
+            // Grab gesture is complete so save value
+            saveCalibrationValue(hand.palmPosition, calibrationDirections[calibrationIndex]);
+
+            calibrationIndex++;
+
+            if (calibrationIndex == calibrationDirections.length) {
+                // Calibration is finished
+                $('#calibrationPopup #mainContent').hide();
+                $('#calibrationComplete').show();
+
+                // In 6 seconds, so the user has enough time to read the message, close the popup and apply the new zones in CSS
+                setTimeout(function() {
+                    magnificPopup.close();
+
+                    applyZoneCSS();
+
+                    // Set the popup main content to show again incase the user wants to calibrate again
+                    $('#calibrationPopup #mainContent').show();
+                    $('#calibrationComplete').hide();
+                }, 3000);
+
+                // Reset the caibration system back to the beginning
+                calibrationIndex = 0;
+                calibrationTime = false;
+            }
+
+            // Set the source of the gif depending on which stage the user is on
+            $('#calibrationGridContainer img').attr('src', 'static/img/' + calibrationDirections[calibrationIndex] + '.gif');
+
+            resetGrabTracker();
+
+            $('#calibrationDirection').text(calibrationDirections[calibrationIndex]);
+            $('#calibrationSlider').slider('value', 0);
+            waitingForOpenHand = true;
         }
-        $('#calibrationGridContainer img').attr('src', 'static/img/' + calibrationDirections[calibrationIndex] + '.gif');
-        resetGrabTracker();
-        $('#calibrationDirection').text(calibrationDirections[calibrationIndex]);
-    }
-    else if (grabTracker.enabled && hand.grabStrength < 0.9) {
-        // Reset the tracker
-        resetGrabTracker();
-    }
-    else if (!grabTracker.enabled && hand.grabStrength >= 0.9) {
-        console.log('Starting grab tracker');
-        // Start the tracker
-        grabTracker.enabled = true;
-        grabTracker.startFrame = frame.id;
-        grabTracker.endFrame = frame.id + (leapFPS * 3);
+        else if (grabTracker.enabled && hand.grabStrength < 0.9) {
+            // Reset the tracker
+            resetGrabTracker();
+        }
+        else if (!grabTracker.enabled && hand.grabStrength >= 0.9) {
+            // Start the tracker
+            grabTracker.enabled = true;
+            grabTracker.startFrame = frame.id;
+            grabTracker.endFrame = frame.id + (leapFPS * 3);
+        }
+        // Fill up the grab slider
+        else if (grabTracker.enabled && hand.grabStrength >= 0.9) {
+            var start = grabTracker.startFrame;
+            var end = grabTracker.endFrame;
+            var current = frame.id;
+            var percentageComplete = Math.round(((current - start) / (end - start)) * 100);
+            $('#calibrationSlider').slider('value', percentageComplete);
+        }
     }
 }
 
@@ -149,16 +178,18 @@ Leap.loop({enableGestures: true}, function(frame) {
     }
 
     frame.hands.forEach(function(hand, index) {
-        var handDot = (hands[index] || (hands[index] = new HandDot()));
-        handDot.setTransform(hand.palmPosition);
-
-        var calibrationDot = (calibrationHands[index] || (calibrationHands[index] = new CalibrationDot()));
-        calibrationDot.setTransform(hand.palmPosition);
-        var heightPercentage = ((hand.palmPosition[1] - 50) / 250) * 100;
-        $('#heightSlider').slider('value', heightPercentage);
-        // console.log(hand.palmPosition);
+        // If we're calibrating, move the dot and check the calbration status
         if (calibrationTime) {
+            var calibrationDot = (calibrationHands[index] || (calibrationHands[index] = new CalibrationDot()));
+            calibrationDot.setTransform(hand.palmPosition);
             checkZoneConfirmation(frame, hand);
+        }
+        // Move the main page dot and height meter
+        else {
+            var handDot = (hands[index] || (hands[index] = new HandDot()));
+            handDot.setTransform(hand.palmPosition);
+            var heightPercentage = ((hand.palmPosition[1] - 50) / 350) * 100;
+            $('#heightSlider').slider('value', heightPercentage);
         }
     });
 

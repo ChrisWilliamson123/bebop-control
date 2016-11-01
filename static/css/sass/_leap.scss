@@ -2,9 +2,8 @@
   width: 400px;
   height: 350px;
   border: 1px solid black;
+  float: left;
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
 
   #handDot, #calibrationDot {
     width: 5px;
@@ -20,11 +19,13 @@
   #left, #right {
     height: 100%;
     transition: width 3s;
+    width: 200px;
   }
 
   #forward, #backward {
     width: 100%;
     transition: height 3s;
+    height: 175px;
   }
 
   #left {
@@ -44,12 +45,30 @@
   }
 }
 
-#handHeight {
+canvas {
   position: absolute;
-  right: 400px;
+  top: 200px;
+  right: 120px;
+}
+
+#calibrate {
+  top:30px;
+  position: absolute;
+}
+
+#handStatus {
+  position: relative;
+  top: 200px;
+  left: 200px;
+  width: 440px;
+}
+
+#handHeight {
+  float: right;
+  position: relative;
 
   #heightSlider {
-    height: 875px;
+    height: 350px;
     left: 50%;
     transform: translateX(-50%);
     border: 1px solid black;
@@ -69,15 +88,17 @@
     height: 2px;
     width: 30px;
     background: black;
-    left: 15px;
+    left: 18px;
   }
 
   #upIndicator {
-    top: 20%;
+    top: 0;
+    transition: top 3s;
   }
 
   #downIndicator {
-    top: 80%;
+    bottom: 0;
+    transition: bottom 3s;
   }
 }
 
@@ -104,6 +125,22 @@
     
     &:hover {
       cursor: pointer;
+    }
+  }
+
+  #calibrationSlider {
+    width: 400px;
+    margin: 20px auto;
+
+    border: 1px solid black;
+
+    span {
+      display: none;
+    }
+
+    div.ui-slider-range {
+      background-color: black;
+      border-radius: 0;
     }
   }
   

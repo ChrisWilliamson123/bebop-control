@@ -35,3 +35,12 @@ $('#heightSlider').slider({
 });
 $("#heightSlider .ui-slider-handle").unbind('keydown');
 
+$('#calibrationSlider').slider({
+    value:0,
+    min: 0,
+    max: 100,
+    step: 1,
+    range: 'min'
+});
+$("#heightSlider .ui-slider-handle").unbind('keydown');
+

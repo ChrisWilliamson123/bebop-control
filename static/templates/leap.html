@@ -5,8 +5,9 @@
     <link rel="stylesheet" href="static/css/main.css" />
     <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
     <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
+    <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
 </head>
-<body>
+<body id="main">
 <div id="connection-status">
     <p>Leap: <span id="controller" class="connected">Connected</span> | Drone: <span id="drone" class="disconnected">Disconnected</span></p>
 </div>
@@ -30,17 +31,19 @@
     <div id="wifiStrength"></div>
 </div>
 
-<div id="leapGrid">
-    <div id="left" class="zone"></div>
-    <div id="right" class="zone"></div>
-    <div id="forward" class="zone"></div>
-    <div id="backward" class="zone"></div>
-</div>
+<div id="handStatus">
+    <div id="leapGrid">
+        <div id="left" class="zone"></div>
+        <div id="right" class="zone"></div>
+        <div id="forward" class="zone"></div>
+        <div id="backward" class="zone"></div>
+    </div>
 
-<div id="handHeight">
-    <div id="heightSlider"></div>
-    <div id="upIndicator" class="movementIndicator"></div>
-    <div id="downIndicator" class="movementIndicator"></div>
+    <div id="handHeight">
+        <div id="heightSlider"></div>
+        <div id="upIndicator" class="movementIndicator"></div>
+        <div id="downIndicator" class="movementIndicator"></div>
+    </div>
 </div>
 
 <div id="chart"></div>
@@ -54,6 +57,7 @@
         <p>Once you have reached a comfortable position for that direction, make a fist for 3 seconds and your choice will be confirmed.</p>
         <p>The gif on the right hand side will change to show a user calibrating the Leap, depending on which direction you should be calibrating.</p>
         <h3>Calibration Direction: <span id="calibrationDirection"></span></h3>
+        <div id="calibrationSlider"></div>
         <div id="calibrationGridContainer">
             <div id="calibrationGrid">
             </div>
@@ -86,5 +90,9 @@
 <script src="static/js/leapController.js"></script>
 <script src="static/js/sliders.js"></script>
 <script src="static/js/globalSocketController.js"></script>
+<script src="static/js/video-client-bundle.js"></script>
+<script src="static/js/d3.min.js"></script>
+<script src="static/js/c3.min.js"></script>
+<script src="static/js/graphs.js"></script>
 </body>
 </html>
