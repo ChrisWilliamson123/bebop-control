@@ -29,6 +29,7 @@
 
   #introText {
     color: white;
+    padding-top: 100px;
 
     #wifiDetected, #wifiConnected, #chooseInput {
       display: none;
@@ -58,7 +59,5 @@
         }
       }
     }
-
-    padding-top: 100px;
   }
 }

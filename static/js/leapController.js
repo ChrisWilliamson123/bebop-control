@@ -3,9 +3,8 @@ var hands = {},
     output = document.getElementById('output'),
     currentDirections = [],
     inFlight = false,
-    tolTimer = false;
-
-var calibrationValues = {
+    tolTimer = false,
+    calibrationValues = {
         'left': -95,
         'right': 128,
         'forward': -81,
@@ -13,7 +12,7 @@ var calibrationValues = {
         'up': 253,
         'down': 79
     },
-// var calibrationValues = {
+// calibrationValues = {
 //         'left': 0,
 //         'right': 0,
 //         'forward': 0,
@@ -37,7 +36,7 @@ var calibrationValues = {
         'down'
     ],
     calibrationIndex = 0,
-    waitingForOpenHand = false;
+    waitingForOpenHand = false,
     magnificPopup = $.magnificPopup.instance;
 
 applyZoneCSS();
@@ -61,6 +60,7 @@ function applyZoneCSS() {
     $('#right').width(210 - calibrationValues['right']);
     $('#forward').height(150 + calibrationValues['forward'] + 10);
     $('#backward').height(350 - (150 + calibrationValues['backward'] - 10));
+
     var upPercentage = Math.round(((calibrationValues['up'] - 60) / 350) * 100);
     var downPercentage = Math.round(((calibrationValues['down'] - 40) / 350) * 100);
     $('#upIndicator').css('top', 100-upPercentage + '%');
@@ -313,7 +313,6 @@ var CalibrationDot = function() {
     };
 };
 
-var magnificPopup = $.magnificPopup.instance;
 $('.open-popup').magnificPopup({
     type:'inline',
     callbacks: {

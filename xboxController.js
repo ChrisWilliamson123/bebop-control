@@ -3,6 +3,8 @@ var XboxController = require('xbox-controller'),
     xbox = new XboxController,
     keyController = new ControllerFile(xbox),
     socket,
+    droneController,
+    drone,
     triggerThreshold = 120,
     stickThreshold = 20,
     lastXPercentage = 0,
@@ -40,7 +42,7 @@ function restartMovement() {
 
 function init(socketInstance) {
     socket = socketInstance;
-    droneControllerFile = require('./droneController');
+    var droneControllerFile = require('./droneController');
     droneController = new droneControllerFile(socket);
     drone = droneController.drone;
 

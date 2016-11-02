@@ -127,16 +127,17 @@ var droneController = function(socketInstance) {
         }
     });
 
+    socket.on('defaultSpeedChange', function(newSpeed) {
+        controller.speed = newSpeed;
+    });
+
     setTimeout(function() {
         emitBattery();
     }, 10000);
 
+    // As soon as we build a new object, the app will connect to the drone.
     drone.connect(function() {
         console.log('Drone connected');
-    });
-
-    socket.on('defaultSpeedChange', function(newSpeed) {
-        controller.speed = newSpeed;
     });
 };
 

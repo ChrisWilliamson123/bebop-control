@@ -30,20 +30,16 @@ io.on('connection', function (socket) {
         wifi.init(socket, wifiEvents);
         // Start the process of searching and connecting to the drone's wifi
         wifi.connectDroneWifi();
-        // Once we have connected to the drone's wifi, connect the app to the drone
-        wifiEvents.on('connectDrone', function() {
-            console.log('Wifi Connected, attempting app-drone connection');
-            wifiConnection = true;
-            socket.emit('appConnectedToDrone');
-        });
     });
 
+    // If the user chooses xbox controller, set up the module and initialise
     socket.on('xboxInitialised', function() {
         console.log('User has chosen Xbox controller as input device');
         var xbox = require('./xboxController');
         xbox.init(socket);
     });
 
+    // If the user chooses Leap Motion, set up the module and initialise
     socket.on('leapInitialised', function() {
         console.log('User has chosen Leap Motion as input device');
         var leap = require('./leapController');

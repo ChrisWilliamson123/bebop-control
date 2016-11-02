@@ -78,9 +78,6 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     var socket = io('http://localhost:8001');
-    socket.on('test', function (data) {
-        console.log(data);
-    });
     socket.emit('leapInitialised');
 </script>
 <script src="static/js/jquery.min.js"></script>

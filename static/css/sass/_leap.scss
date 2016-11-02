@@ -52,8 +52,20 @@ canvas {
 }
 
 #calibrate {
-  top:30px;
   position: absolute;
+  left: 50%;
+  border: 1px solid black;
+  padding: 10px 30px;
+  transform: translateX(-50%);
+  top: 40px;
+  text-decoration: none;
+  color: black;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: black;
+    color: white;
+  }
 }
 
 #handStatus {
@@ -164,4 +176,8 @@ canvas {
     float: right;
     width: 500px;
   }
+}
+
+#speed {
+  top: 80px;
 }

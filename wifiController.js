@@ -16,7 +16,7 @@ function initialiseWifi() {
 }
 
 
-// Check if we are already connected to the drone
+// Returns true if the wifi network we are connected to is a Bebop 2 network.
 function alreadyConnectedToDrone() {
     var ifaceState = WiFiControl.getIfaceState();
     if (ifaceState.ssid.indexOf('Bebop2') == 0) {
@@ -26,11 +26,14 @@ function alreadyConnectedToDrone() {
 }
 
 function networkScan() {
+    // We are scanning, so set freeToScan to false
     freeToScan = false;
     WiFiControl.scanForWiFi( function(err, response) {
         if (err) console.log(err);
 
         var networks = response.networks;
+        // Loop through all found networks.
+        // If we find a Bebop 2 network, set the wifi name and remove the scanner interval.
         for (var i = 0; i < networks.length; i++) {
             var network = networks[i];
             var SSID = network.ssid;
@@ -39,6 +42,7 @@ function networkScan() {
                 removeScanner();
             }
         }
+        // Finished doing scanning logic, we are free to scan again
         freeToScan = true;
     })
 }
@@ -57,10 +61,6 @@ function connectToNetwork(SSID) {
         if (err) console.log(err);
         if (response.success) {
             socket.emit('droneWifiConnected');
-            setTimeout(function() {
-                events.emit('connectDrone');
-                socket.emit('appConnectedToDrone');
-            }, 2000);
         }
     });
 }
@@ -71,12 +71,11 @@ function attemptDroneConnection() {
     if (alreadyConnectedToDrone()) {
         // WiFi is already connected to drone, so send through socket
         socket.emit('droneWifiConnected');
-        setTimeout(function() {
-            events.emit('connectDrone');
-        }, 2000);
     }
     else {
-        // The first scan will be 4s after initialisation, then 1s after, then every 5s
+        // Here, the first network scan will be 4 seconds after the app is initialised.
+        // After that, every 1s there will be a check to see if a scan is already in place.
+        // If it is not, we will scan again.
         setTimeout(function() {
             networkScan();
             scanner = setInterval(function(){
