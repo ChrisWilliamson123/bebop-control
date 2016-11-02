@@ -1,23 +1,26 @@
-var hands = {};
-var calibrationHands = {};
-var output = document.getElementById('output');
+var hands = {},
+    calibrationHands = {},
+    output = document.getElementById('output'),
+    currentDirections = [],
+    inFlight = false,
+    tolTimer = false;
 
-// var calibrationValues = {
-//         'left': -95,
-//         'right': 128,
-//         'forward': -81,
-//         'backward': 117,
-//         'up': 253,
-//         'down': 79
-//     },
 var calibrationValues = {
-        'left': 0,
-        'right': 0,
-        'forward': 0,
-        'backward': 0,
-        'up': 0,
-        'down': 0
+        'left': -95,
+        'right': 128,
+        'forward': -81,
+        'backward': 117,
+        'up': 253,
+        'down': 79
     },
+// var calibrationValues = {
+//         'left': 0,
+//         'right': 0,
+//         'forward': 0,
+//         'backward': 0,
+//         'up': 0,
+//         'down': 0
+//     },
     grabTracker = {
         'startFrame': 0,
         'endFrame': 0,
@@ -37,6 +40,8 @@ var calibrationValues = {
     waitingForOpenHand = false;
     magnificPopup = $.magnificPopup.instance;
 
+applyZoneCSS();
+
 var controller = new Leap.Controller();
 controller.on('deviceStreaming', function() {
     console.log("A Leap device has been connected.");
@@ -54,10 +59,10 @@ controller.connect();
 function applyZoneCSS() {
     $('#left').width(210 + calibrationValues['left']);
     $('#right').width(210 - calibrationValues['right']);
-    $('#forward').height(185 + calibrationValues['forward']);
-    $('#backward').height(185 - calibrationValues['backward']);
-    var upPercentage = Math.round(((calibrationValues['up'] - 50) / 350) * 100);
-    var downPercentage = Math.round(((calibrationValues['down'] - 50) / 350) * 100);
+    $('#forward').height(150 + calibrationValues['forward'] + 10);
+    $('#backward').height(350 - (150 + calibrationValues['backward'] - 10));
+    var upPercentage = Math.round(((calibrationValues['up'] - 60) / 350) * 100);
+    var downPercentage = Math.round(((calibrationValues['down'] - 40) / 350) * 100);
     $('#upIndicator').css('top', 100-upPercentage + '%');
     $('#downIndicator').css('bottom', downPercentage + '%');
 }
@@ -151,49 +156,136 @@ function checkZoneConfirmation(frame, hand) {
 
 Leap.loop({enableGestures: true}, function(frame) {
     var handCount = frame.hands.length;
-    // // Just show the number of hands that are currently being detected
-    // output.innerHTML = 'Number of hands: ' + handCount;
-    //
-    // // If there are no hands detected, we want the drone to hover
-    // if (!handCount) {
-    //     if (!isEqual(currentDirections, ['stop'])) moveDrone(['stop']);
-    // }
-    // else if (handCount == 2) {
-    //     takeoffController(frame.hands);
-    // }
-    // else if (handCount == 1 && frame.hands[0].type == 'right') {
-    //     // if (frame.hands)
-    //     console.log(frame.hands[0].grabStrength > 0.9 && !droneConnected);
-    //     if (frame.hands[0].grabStrength > 0.9 && !droneConnected) {
-    //         socket.emit('connectDrone');
-    //         droneConnected = true;
-    //     }
-    //     else {
-    //         rightHandController(frame.hands[0]);
-    //     }
-    // }
+
+    // If there are no hands detected, we want the drone to hover
+    if (!handCount) {
+        if (!isEqual(currentDirections, ['stop'])) moveDrone(['stop']);
+    }
+
+    else if (handCount == 2) {
+        takeoffController(frame.hands);
+    }
+
+    // If we only detect the right hand
+    else if (handCount == 1 && frame.hands[0].type == 'right') {
+        var hand = frame.hands[0];
+        // If we're calibrating, move the dot and check the calbration status
+        if (calibrationTime) {
+            var calibrationDot = (calibrationHands[0] || (calibrationHands[0] = new CalibrationDot()));
+            calibrationDot.setTransform(hand.palmPosition);
+            checkZoneConfirmation(frame, hand);
+        }
+        else {
+            rightHandController(hand);
+        }
+    }
     if (handCount == 0 && grabTracker.enabled) {
         console.log('No hands detected, cancelling grab tracker.');
         resetGrabTracker();
     }
 
     frame.hands.forEach(function(hand, index) {
-        // If we're calibrating, move the dot and check the calbration status
-        if (calibrationTime) {
-            var calibrationDot = (calibrationHands[index] || (calibrationHands[index] = new CalibrationDot()));
-            calibrationDot.setTransform(hand.palmPosition);
-            checkZoneConfirmation(frame, hand);
-        }
         // Move the main page dot and height meter
-        else {
-            var handDot = (hands[index] || (hands[index] = new HandDot()));
-            handDot.setTransform(hand.palmPosition);
-            var heightPercentage = ((hand.palmPosition[1] - 50) / 350) * 100;
-            $('#heightSlider').slider('value', heightPercentage);
-        }
+        var handDot = (hands[index] || (hands[index] = new HandDot()));
+        handDot.setTransform(hand.palmPosition);
+        var heightPercentage = ((hand.palmPosition[1] - 50) / 350) * 100;
+        $('#heightSlider').slider('value', heightPercentage);
     });
 
 }).use('screenPosition', {scale: 0.25});
+
+function isEqual(array1, array2) {
+    return array1.length == array2.length && array1.every(function(element, index) {
+            return array2.indexOf(element) >= 0;
+        });
+}
+
+function addDirection(direction, newDirections) {
+    if (newDirections.indexOf(direction) < 0) {
+        newDirections.push(direction);
+    }
+}
+
+function rightHandController(hand) {
+    var newDirections = [];
+    // An [x, y, z] unit vector of the hands position relative to the center of the Leap Motion's view
+    var position = hand.palmPosition;
+
+    // Get the x distance of the hand from the center of the Motion's view
+    var xDistance = position[0];
+    if (xDistance >= calibrationValues['right'] - 10) {
+        addDirection('right', newDirections);
+    }
+    else if (xDistance <= calibrationValues['left'] + 10) {
+        addDirection('left', newDirections);
+    }
+
+    // Get the y distance of the hand from the center of the Motion's view
+    var yDistance = position[1];
+    if (yDistance <= calibrationValues['down'] + 10) {
+        addDirection('down', newDirections);
+    }
+    else if (yDistance > calibrationValues['up'] - 10) {
+        addDirection('up', newDirections);
+    }
+
+    // Get the z distance of the hand from the center of the Motion's view
+    var zDistance = position[2];
+    if (zDistance < calibrationValues['forward'] + 10) {
+        addDirection('forward', newDirections);
+    }
+    else if (zDistance > calibrationValues['backward'] - 10) {
+        addDirection('backward', newDirections);
+    }
+    console.log(newDirections);
+    if (!newDirections.length) {
+        addDirection('stop', newDirections);
+    }
+
+    if (!isEqual(newDirections, currentDirections)) {
+        moveDrone(newDirections);
+    }
+}
+
+function moveDrone(directions) {
+    console.log(directions);
+    for (var i = 0; i < directions.length; i++) {
+        socket.emit('move drone', directions[i]);
+        console.log('Drone direction: ' + directions[i]);
+    }
+    currentDirections = directions;
+}
+
+function takeoffController(hands) {
+    if (!isEqual(currentDirections, ['stop'])) socket.emit('move drone', 'stop');
+    currentDirections = ['stop'];
+    var leftNormal = 0;
+    var rightNormal = 0;
+    var leftHeight = 0;
+    var rightHeight = 0;
+
+    hands.forEach(function(hand) {
+        if (hand.type == 'right') {
+            rightNormal = hand.palmNormal;
+            rightHeight = hand.palmPosition[1];
+        }
+        else {
+            leftNormal = hand.palmNormal;
+            leftHeight = hand.palmPosition[1];
+        }
+    });
+
+    if (leftNormal[1] > 0.75 && rightNormal[1] > 0.75 && rightHeight > (calibrationValues['up'] - 10) && (leftHeight > calibrationValues['up'] - 10) && !inFlight && !tolTimer) {
+        startTOLTimer();
+        console.log('Drone taking off');
+        socket.emit('TOL', 'takeOff');
+    }
+    else if (leftNormal[1] < -0.75 && rightNormal[1] < -0.75 && rightHeight < (calibrationValues['down'] + 10) && leftHeight < (calibrationValues['down'] + 10) && inFlight && !tolTimer) {
+        startTOLTimer();
+        console.log('Drone is landing');
+        socket.emit('TOL', 'land');
+    }
+}
 
 var HandDot = function() {
     var hand = this;
@@ -232,6 +324,17 @@ $('.open-popup').magnificPopup({
     }
 });
 
+function startTOLTimer() {
+    tolTimer = true;
+    setTimeout(function() {
+        tolTimer = false;
+    }, 3000);
+}
+
 hands[0] = new HandDot();
 calibrationHands[0] = new CalibrationDot();
+
+socket.on('TOL', function (flight) {
+    inFlight = flight;
+});
 

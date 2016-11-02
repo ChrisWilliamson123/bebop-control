@@ -43,6 +43,12 @@ io.on('connection', function (socket) {
         var xbox = require('./xboxController');
         xbox.init(socket);
     });
+
+    socket.on('leapInitialised', function() {
+        console.log('User has chosen Leap Motion as input device');
+        var leap = require('./leapController');
+        leap.init(socket);
+    })
 });
 
 // The following will catch uncaught exceptions.

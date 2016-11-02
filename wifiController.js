@@ -1,6 +1,6 @@
 // Load the wifi control package
 var WiFiControl = require('wifi-control');
-
+var freeToScan = true;
 var scanner = '';
 var socket = '';
 var events = '';
@@ -26,8 +26,10 @@ function alreadyConnectedToDrone() {
 }
 
 function networkScan() {
+    freeToScan = false;
     WiFiControl.scanForWiFi( function(err, response) {
         if (err) console.log(err);
+
         var networks = response.networks;
         for (var i = 0; i < networks.length; i++) {
             var network = networks[i];
@@ -37,6 +39,7 @@ function networkScan() {
                 removeScanner();
             }
         }
+        freeToScan = true;
     })
 }
 
@@ -77,8 +80,10 @@ function attemptDroneConnection() {
         setTimeout(function() {
             networkScan();
             scanner = setInterval(function(){
-                networkScan();
-            }, 5000);
+                if (freeToScan) {
+                    networkScan();
+                }
+            }, 1000);
         }, 4000);
     }
 }
