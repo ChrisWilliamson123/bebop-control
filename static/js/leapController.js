@@ -4,22 +4,22 @@ var hands = {},
     currentDirections = [],
     inFlight = false,
     tolTimer = false,
+    // calibrationValues = {
+    //     'left': -95,
+    //     'right': 128,
+    //     'forward': -81,
+    //     'backward': 117,
+    //     'up': 253,
+    //     'down': 79
+    // },
     calibrationValues = {
-        'left': -95,
-        'right': 128,
-        'forward': -81,
-        'backward': 117,
-        'up': 253,
-        'down': 79
+        'left': 0,
+        'right': 0,
+        'forward': 0,
+        'backward': 0,
+        'up': 0,
+        'down': 0
     },
-// calibrationValues = {
-//         'left': 0,
-//         'right': 0,
-//         'forward': 0,
-//         'backward': 0,
-//         'up': 0,
-//         'down': 0
-//     },
     grabTracker = {
         'startFrame': 0,
         'endFrame': 0,
@@ -36,10 +36,11 @@ var hands = {},
         'down'
     ],
     calibrationIndex = 0,
+    calibrationApplied = false,
     waitingForOpenHand = false,
     magnificPopup = $.magnificPopup.instance;
 
-applyZoneCSS();
+// applyZoneCSS();
 
 var controller = new Leap.Controller();
 controller.on('deviceStreaming', function() {
@@ -121,6 +122,7 @@ function checkZoneConfirmation(frame, hand) {
                 // Reset the caibration system back to the beginning
                 calibrationIndex = 0;
                 calibrationTime = false;
+                calibrationApplied = true;
             }
 
             // Set the source of the gif depending on which stage the user is on
@@ -162,7 +164,7 @@ Leap.loop({enableGestures: true}, function(frame) {
         if (!isEqual(currentDirections, ['stop'])) moveDrone(['stop']);
     }
 
-    else if (handCount == 2) {
+    else if (handCount == 2 && calibrationApplied) {
         takeoffController(frame.hands);
     }
 
@@ -175,7 +177,7 @@ Leap.loop({enableGestures: true}, function(frame) {
             calibrationDot.setTransform(hand.palmPosition);
             checkZoneConfirmation(frame, hand);
         }
-        else {
+        else if (calibrationApplied) {
             rightHandController(hand);
         }
     }
@@ -318,6 +320,7 @@ $('.open-popup').magnificPopup({
     callbacks: {
         open: function () {
             calibrationTime = true;
+            calibrationApplied = false;
             $('#calibrationDirection').text(calibrationDirections[calibrationIndex]);
         }
     }
