@@ -10,14 +10,16 @@
 
     <body id="xbox">
         <div id="main">
-            <div id="connection-status">
-                <p>Controller: <span id="controller">Disconnected</span> | Drone: <span id="drone" class="connected">Connected</span></p>
+            <div id="top-bar">
+                <div id="connection-status" class="backgrounded rectangle">
+                    <p>Controller: <span id="controller" class="connected">Connected</span> | Drone: <span id="drone" class="connected">Connected</span></p>
+                </div>
+
+                <div id="battery" class="backgrounded rectangle">Battery: <span>waiting...</span></div>
+                <div id="altitude" class="backgrounded rectangle">Distance: <span id="distance">0</span>m</div>
             </div>
 
-            <div id="battery">Battery: <span>waiting...</span></div>
-            <div id="altitude">Distance: <span id="distance">0</span>m</div>
-
-            <div id="speed">
+            <div id="speed" class="backgrounded square">
                 <p>
                     <label for="amount">Drone speed:</label>
                     <span id="amount"></span>
@@ -26,15 +28,19 @@
                 <div id="slider"></div>
             </div>
 
-            <div id="wifi">
+            <div id="wifi" class="backgrounded square">
                 <label for="wifiStrength">WiFi strength</label>
                 <div id="wifiStrength"></div>
             </div>
 
-            <div id="left-trigger"><div class="fill"></div></div>
-            <div id="right-trigger"><div class="fill"></div></div>
-            <div id="left-stick"><div class="center"></div></div>
-            <div id="right-stick"><div class="center"></div></div>
+            <div id="left-controls" class="backgrounded square">
+                <div id="left-trigger"><div class="fill"></div></div>
+                <div id="left-stick"><div class="center"></div></div>
+            </div>
+            <div id="right-controls" class="backgrounded square">
+                <div id="right-trigger"><div class="fill"></div></div>
+                <div id="right-stick"><div class="center"></div></div>
+            </div>
 
             <div id="chart"></div>
         </div>

@@ -127,6 +127,10 @@ var droneController = function(socketInstance) {
         }
     });
 
+    drone.on('WifiSelectionChanged', function(data) {
+        console.log(data);
+    });
+
     socket.on('defaultSpeedChange', function(newSpeed) {
         controller.speed = newSpeed;
     });
@@ -138,6 +142,8 @@ var droneController = function(socketInstance) {
     // As soon as we build a new object, the app will connect to the drone.
     drone.connect(function() {
         console.log('Drone connected');
+        drone.MediaStreaming.videoEnable(1);
+        drone.getVideoStream();
     });
 };
 

@@ -1,16 +1,5 @@
 socket.emit('xboxInitialised');
 
-// socket.on('drone connected', function(connected) {
-//     $('#connection-status #drone').removeClass();
-//     $('#connection-status #drone').addClass(connected.toLowerCase());
-//     $('#connection-status #drone').text(connected);
-// });
-//
-// socket.on('droneConnected', function() {
-//     $('#droneConnection span').addClass('connected');
-//     $('#droneConnection span').text('Connected');
-// });
-
 socket.on('controller connected', function(connected) {
     $('#connection-status #controller').removeClass();
     $('#connection-status #controller').addClass(connected.toLowerCase());

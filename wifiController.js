@@ -19,7 +19,7 @@ function initialiseWifi() {
 // Returns true if the wifi network we are connected to is a Bebop 2 network.
 function alreadyConnectedToDrone() {
     var ifaceState = WiFiControl.getIfaceState();
-    if (ifaceState.ssid.indexOf('Bebop2') == 0) {
+    if (ifaceState.ssid.indexOf('Bebop') == 0) {
         return true;
     }
     return false;
@@ -37,7 +37,7 @@ function networkScan() {
         for (var i = 0; i < networks.length; i++) {
             var network = networks[i];
             var SSID = network.ssid;
-            if (SSID.indexOf('Bebop2') == 0) {
+            if (SSID.indexOf('Bebop') == 0) {
                 droneWiFiName = SSID;
                 removeScanner();
             }

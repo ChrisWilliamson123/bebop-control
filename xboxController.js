@@ -46,6 +46,14 @@ function init(socketInstance) {
     droneController = new droneControllerFile(socket);
     drone = droneController.drone;
 
+    xbox.on('connected', function(){
+        socket.emit("controller connected", "Connected");
+    });
+
+    xbox.on('not-found', function(){
+        socket.emit("controller connected", "Disconnected");
+    });
+
     xbox.on('a:press', function() {
         drone.takeOff();
     });

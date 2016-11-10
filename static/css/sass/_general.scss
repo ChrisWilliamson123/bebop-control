@@ -1,40 +1,60 @@
 body {
-  font-family: Helvetica, sans-serif;
+  font-family: "Helvetica Neue", sans-serif;
   font-size: 20px;
   margin: 0;
+  color: white;
+  background: gray;
 }
 
-#connection-status {
-  position: absolute;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  transform: translateX(-50%);
+#top-bar {
+  margin-top: 10px;
 
-  p {
-    margin: 0;
-  }
+  #connection-status {
+    position: absolute;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
 
-  span {
-    color: red;
+    p {
+      margin: 0;
+    }
 
-    &.connected {
-      color: lightgreen;
+    span {
+      color: red;
+
+      &.connected {
+        color: lightgreen;
+      }
     }
   }
+
+  #battery {
+    position: absolute;
+    left: 10px;
+  }
+
+  #altitude {
+    position: absolute;
+    right: 10px;
+  }
 }
 
-#battery {
-  position: absolute;
-  left: 10px;
+.backgrounded {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+
+  &.square {
+    padding: 20px;
+  }
+
+  &.rectangle {
+    padding: 10px 30px;
+  }
 }
 
-#altitude {
-  position: absolute;
-  right: 10px;
-}
 
 #speed {
   width: 250px;
@@ -48,25 +68,29 @@ body {
   transform: translateX(-50%);
 
   #slider {
-    border: 1px solid black;
+    border: 1px solid white;
+    background-color: transparent;
 
     span {
-      background-color: white;
-      border: 1px solid black;
+      background-color: black;
+      border: 1px solid white;
 
       &:focus {
         outline: 0;
       }
 
       &.ui-state-active {
-        background-color: white;
-        border: 1px solid black;
+        background-color: black;
+        border: 1px solid white;
       }
     }
 
     div.ui-slider-range {
-      background-color: black;
+      background-color: white;
     }
+  }
+  p {
+    margin-top: 0;
   }
 }
 
@@ -80,7 +104,8 @@ body {
     left: 50%;
     transform: translateX(-50%);
     margin-top: 20px;
-    border: 1px solid black;
+    border: 1px solid white;
+    background-color: transparent;
 
     div.ui-slider-range {
       background-color: black;
@@ -97,4 +122,21 @@ body {
   position: absolute!important;
   bottom: 0 !important;
   width: 98vw;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  z-index: -1;
+  background-color: gray !important;
+}
+
+#chart.c3 {
+  line, path, text {
+    stroke: white;
+    color: white
+  }
 }

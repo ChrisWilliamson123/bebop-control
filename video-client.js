@@ -8,11 +8,7 @@ var player = new Player({
 });
 
 player.canvas.id = 'videoCanvas';
-player.canvas.width = 640;
-player.canvas.height = 368;
 $('#main').append(player.canvas);
-$('#videoCanvas').css('background-color', 'white');
-$('#videoCanvas').css('border', '1px solid black');
 
 
 var toUint8Array = function (parStr) {
