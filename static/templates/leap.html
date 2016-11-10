@@ -8,16 +8,18 @@
     <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
 </head>
 <body id="main">
-<div id="connection-status">
-    <p>Leap: <span id="controller">Disconnected</span> | Drone: <span id="drone" class="disconnected">Disconnected</span></p>
-</div>
+<div id="top-bar">
+    <div id="connection-status" class="backgrounded rectangle">
+        <p>Leap: <span id="controller">Disconnected</span> | Drone: <span id="drone" class="connected">Connected</span></p>
+    </div>
 
-<div id="battery">Battery: <span>waiting...</span></div>
-<div id="altitude">Distance: <span id="distance">0</span>m</div>
+    <div id="battery" class="backgrounded rectangle">Battery: <span>waiting...</span></div>
+    <div id="altitude" class="backgrounded rectangle">Distance: <span id="distance">0</span>m</div>
+</div>
 
 <a href="#calibrationPopup" class="open-popup" id="calibrate">Calibrate Zones</a>
 
-<div id="speed">
+<div id="speed" class="backgrounded square">
     <p>
         <label for="amount">Drone speed:</label>
         <span id="amount"></span>
@@ -26,12 +28,12 @@
     <div id="slider"></div>
 </div>
 
-<div id="wifi">
+<div id="wifi" class="backgrounded square">
     <label for="wifiStrength">WiFi strength</label>
     <div id="wifiStrength"></div>
 </div>
 
-<div id="handStatus">
+<div id="handStatus" class="backgrounded square">
     <div id="leapGrid">
         <div id="left" class="zone"></div>
         <div id="right" class="zone"></div>
