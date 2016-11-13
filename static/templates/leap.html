@@ -51,6 +51,14 @@
 <div id="chart"></div>
 
 <div id="calibrationPopup" class="mfp-hide">
+    <div id="initialCheck">
+        <p>To control the drone with the Leap Motion, your hand needs to move to different zones in the Leap's view space. For example, having your hand in the left side area will move the drone left.</p>
+        <p>Would you like to use the default calibration or create your own?</p>
+        <div id="confirmation-buttons">
+            <button id="ownCalibration">Create my own</button>
+            <button id="initialCalibration">Use default</button>
+        </div>
+    </div>
     <div id="mainContent">
         <h2>Welcome to the calibration wizard</h2>
         <p>The box below represents the space that the Leap Motion can detect.</p>
@@ -94,5 +102,6 @@
 <script src="static/js/d3.min.js"></script>
 <script src="static/js/c3.min.js"></script>
 <script src="static/js/graphs.js"></script>
+<script src="static/js/leapPopup.js"></script>
 </body>
 </html>

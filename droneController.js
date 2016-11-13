@@ -41,11 +41,13 @@ Number.prototype.toRad = function() {
 };
 
 var droneController = function(socketInstance) {
+    var count = 0;
     controller = this;
 
     socket = socketInstance;
 
     bebop = require('node-bebop');
+    var NanoTimer = require('nanotimer');
     // Used this. so that it can be referenced by the initiator file
     this.drone = bebop.createClient();
     // Used just 'drone' here so that events below are more readable
@@ -145,6 +147,9 @@ var droneController = function(socketInstance) {
         drone.MediaStreaming.videoEnable(1);
         drone.getVideoStream();
     });
+
+    // var timer = new NanoTimer();
+    // timer.setInterval(function(){count++;console.log(count)}, '', '25m');
 };
 
 module.exports = droneController;

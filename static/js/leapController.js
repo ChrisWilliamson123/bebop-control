@@ -4,14 +4,14 @@ var hands = {},
     currentDirections = [],
     inFlight = false,
     tolTimer = false,
-    // calibrationValues = {
-    //     'left': -95,
-    //     'right': 128,
-    //     'forward': -81,
-    //     'backward': 117,
-    //     'up': 253,
-    //     'down': 79
-    // },
+    initialCalibrationValues = {
+        'left': -95,
+        'right': 128,
+        'forward': -81,
+        'backward': 117,
+        'up': 253,
+        'down': 79
+    },
     calibrationValues = {
         'left': 0,
         'right': 0,
@@ -142,7 +142,7 @@ function checkZoneConfirmation(frame, hand) {
             // Start the tracker
             grabTracker.enabled = true;
             grabTracker.startFrame = frame.id;
-            grabTracker.endFrame = frame.id + (leapFPS * 3);
+            grabTracker.endFrame = frame.id + (leapFPS * 2);
         }
         // Fill up the grab slider
         else if (grabTracker.enabled && hand.grabStrength >= 0.9) {
@@ -315,17 +315,6 @@ var CalibrationDot = function() {
     };
 };
 
-$('.open-popup').magnificPopup({
-    type:'inline',
-    callbacks: {
-        open: function () {
-            calibrationTime = true;
-            calibrationApplied = false;
-            $('#calibrationDirection').text(calibrationDirections[calibrationIndex]);
-        }
-    }
-});
-
 function startTOLTimer() {
     tolTimer = true;
     setTimeout(function() {
@@ -339,4 +328,3 @@ calibrationHands[0] = new CalibrationDot();
 socket.on('TOL', function (flight) {
     inFlight = flight;
 });
-

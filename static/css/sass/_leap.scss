@@ -47,11 +47,10 @@
 
 #calibrate {
   position: absolute;
-  left: 50%;
+  left: 25%;
   border: 1px solid white;
-  padding: 10px 30px;
+  padding: 9px 30px;
   transform: translateX(-50%);
-  top: 80px;
   color: white;
   text-decoration: none;
   border-radius: 10px;
@@ -64,9 +63,8 @@
 
 #handStatus {
   position: absolute;
-  left: 50%;
-  top: 300px;
-  transform: translateX(-50%);
+  top: 70px;
+  right: 10px;
   width: 480px;
 }
 
@@ -119,24 +117,35 @@
   border-radius: 10px;
   text-align: center;
   color: black;
+  
+  #mainContent {
+    display: none;
+  }
 
   h2 {
     margin: 0;
   }
 
-  button {
+  #confirmation-buttons {
     margin: 0 auto;
-    font-size: 20px;
-    background: black;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    padding: 10px 30px;
-    
-    &:hover {
-      cursor: pointer;
+
+    button {
+      margin: 0 5px;
+      font-size: 20px;
+      border: 1px solid black;
+      border-radius: 5px;
+      color: black;
+      padding: 10px 30px;
+      background-color: white;
+
+      &:hover {
+        cursor: pointer;
+        background: black;
+        color: white;
+      }
     }
   }
+
 
   #calibrationSlider {
     width: 400px;
@@ -182,5 +191,5 @@
 }
 
 #speed {
-  top: 155px;
+  top: 70px;
 }
