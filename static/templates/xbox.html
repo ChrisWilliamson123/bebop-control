@@ -6,6 +6,7 @@
         <link rel="stylesheet" type="text/css" href="static/css/main.css">
         <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
         <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
+        <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
     </head>
 
     <body id="xbox">
@@ -17,6 +18,8 @@
 
                 <div id="battery" class="backgrounded rectangle">Battery: <span>waiting...</span></div>
                 <div id="altitude" class="backgrounded rectangle">Distance: <span id="distance">0</span>m</div>
+
+                <a href="#filesPopup" class="open-files-popup" id="files">File Browser</a>
             </div>
 
             <div id="speed" class="backgrounded square">
@@ -63,10 +66,17 @@
             </div>
         </div>
 
+        <div id="filesPopup" class="mfp-hide">
+            <h1>Drone Memory</h1>
+            <div id="fileTable">
+            </div>
+        </div>
+
         <script>
             var lastAltitude = 0;
             var lastSpeed = 0;
             var graphTick = '';
+            var files = 0;
         </script>
 
         <script src="/socket.io/socket.io.js"></script>
@@ -75,6 +85,7 @@
         </script>
         <script src="static/js/jquery.min.js"></script>
         <script src="static/js/jquery-ui.js"></script>
+        <script src="static/js/magnificPopup.min.js"></script>
         <script src="static/js/sliders.js"></script>
         <script src="static/js/video-client-bundle.js"></script>
         <script src="static/js/d3.min.js"></script>
@@ -82,5 +93,6 @@
         <script src="static/js/graphs.js"></script>
         <script src="static/js/xboxSocketController.js"></script>
         <script src="static/js/globalSocketController.js"></script>
+        <script src="static/js/filesPopup.js"></script>
     </body>
 </html>

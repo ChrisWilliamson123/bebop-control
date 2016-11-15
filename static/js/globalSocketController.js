@@ -35,3 +35,20 @@ socket.on('distanceChanged', function(distance) {
 socket.on('speedChange', function(speed) {
     lastSpeed = speed;
 });
+
+function applyTransferClickEvents() {
+    $('.transfer').click(function() {
+        console.log('here');
+        // Get the file name
+        var filename = $(this).parent().data('name');
+        socket.emit('downloadMedia', filename);
+    });
+}
+
+socket.on('fileDetected', function(file) {
+    files++;
+    console.log(file);
+    $('#fileTable').append('<div class="row" data-name="' + file.name + '"><p>' + files + ') ' + file.type + ' taken on ' + file.date + ' - ' + file.size + '</p><button class="transfer">Transfer</button></div>');
+    $('.transfer').unbind('click');
+    applyTransferClickEvents();
+});

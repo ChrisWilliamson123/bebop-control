@@ -140,3 +140,16 @@ canvas {
     color: white
   }
 }
+
+#filesPopup {
+  width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 20px;
+  border-radius: 4px;
+  color: black;
+  
+  h1 {
+    text-align: center;
+  }
+}

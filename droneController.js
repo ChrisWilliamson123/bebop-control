@@ -40,14 +40,43 @@ Number.prototype.toRad = function() {
     return this * Math.PI / 180;
 };
 
+// This is used for viewing the files on the drone.
+// Returns the human readable file size
+function getFileSizeString(fileSize) {
+    var inMB = fileSize / 1000000;
+    if (inMB > 1000) {
+        return (inMB / 1000).toFixed(2).toString() + 'GB';
+    }
+    else {
+        return inMB.toFixed(2).toString() + 'MB';
+    }
+}
+
+function ISOToReadable(ISODate) {
+    var split = ISODate.split('T');
+    var date = split[0];
+    var time = split[1].substr(0, 5);
+    return date + ' at ' + time;
+}
+
+function filenameToMediaType(filename) {
+    var fileType = filename.split('.')[1];
+    if (fileType == 'mp4') {
+        return 'Video';
+    }
+    else {
+        return 'Image (' + fileType + ')';
+    }
+}
+
 var droneController = function(socketInstance) {
     var count = 0;
-    controller = this;
-
-    socket = socketInstance;
-
-    bebop = require('node-bebop');
+    var controller = this;
+    var socket = socketInstance;
+    var bebop = require('node-bebop');
+    var FtpClient = require('ftp');
     var NanoTimer = require('nanotimer');
+    var fs = require('fs');
     // Used this. so that it can be referenced by the initiator file
     this.drone = bebop.createClient();
     // Used just 'drone' here so that events below are more readable
@@ -115,21 +144,34 @@ var droneController = function(socketInstance) {
     });
 
     drone.on('video', function (data) {
+        console.log('data');
         socket.emit('data', data.toString('base64'));
     });
 
     drone.on('VideoEnableChanged', function(data) {
+        console.log(data);
         if (data.enabled == 'enabled') {
             controller.recording = true;
-            console.log('Drone is recording.');
+            // drone.startRecording();
+            // drone.getVideoStream();
+            console.log('Drone is recording to internal storage.');
         }
         else {
             controller.recording = false;
+            // drone.stopRecording();
             console.log('Drone is not recording.')
         }
     });
 
     drone.on('WifiSelectionChanged', function(data) {
+        console.log(data);
+    });
+
+    drone.on('CurrentTimeChanged', function(data) {
+        console.log(data);
+    });
+
+    drone.on('CurrentDateChanged', function(data) {
         console.log(data);
     });
 
@@ -144,12 +186,46 @@ var droneController = function(socketInstance) {
     // As soon as we build a new object, the app will connect to the drone.
     drone.connect(function() {
         console.log('Drone connected');
-        drone.MediaStreaming.videoEnable(1);
-        drone.getVideoStream();
-    });
 
-    // var timer = new NanoTimer();
-    // timer.setInterval(function(){count++;console.log(count)}, '', '25m');
+        // Connect to the drone FTP file system
+        var client = new FtpClient();
+        client.on('ready', function() {
+            console.log('FTP client is ready.');
+            this.cwd('internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
+            this.list(function (err, list) {
+                for (var i = 0; i < list.length; i++) {
+                    var readableDate = ISOToReadable((list[i].date).toISOString());
+                    var fileString = getFileSizeString(list[i].size);
+                    var fileType = filenameToMediaType(list[i].name);
+                    socket.emit('fileDetected', {
+                        'name': list[i].name,
+                        'type': fileType,
+                        'date': readableDate,
+                        'size': fileString
+                    })
+                }
+            });
+
+            // Function to download the media via ftp
+            socket.on('downloadMedia', function(filename) {
+                // Get the size of the file we want to transfer
+                client.size(filename, function(err, filesize) {
+                    console.log(filesize);
+                });
+                // Start the transfer of the file
+                client.get(filename, function(err, stream) {
+                    if (err) throw err;
+                    stream.once('close', function() {
+                        console.log('Transfer complete!');
+                    });
+                    stream.pipe(fs.createWriteStream(filename));
+                });
+
+            })
+        });
+        // Connect to the Bebop drone
+        client.connect({'host': '192.168.42.1'});
+    });
 };
 
 module.exports = droneController;

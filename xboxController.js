@@ -66,11 +66,12 @@ function init(socketInstance) {
         console.log(droneController.recording);
         if (!droneController.recording) {
             drone.MediaStreaming.videoEnable(1);
-            drone.getVideoStream();
         }
         else {
             drone.MediaStreaming.videoEnable(0);
         }
+
+        // drone.getVideoStream();
     });
 
     xbox.within('righttrigger', [triggerThreshold+1,255], function(err, data){
