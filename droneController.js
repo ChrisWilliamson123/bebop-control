@@ -1,3 +1,6 @@
+var fs = require('fs');
+var socket;
+
 /*
  This method uses the Haversine formula to determine the distance, in metres, between two sets of coordinates
  I pulled the code from the following Stack Overflow post:
@@ -69,14 +72,90 @@ function filenameToMediaType(filename) {
     }
 }
 
+function setupDownloader(client) {
+    client.cwd('/internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
+    client.list(function (err, list) {
+        for (var i = 0; i < list.length; i++) {
+            var readableDate = ISOToReadable((list[i].date).toISOString());
+            var fileString = getFileSizeString(list[i].size);
+            var fileType = filenameToMediaType(list[i].name);
+            socket.emit('fileDetected', {
+                'name': list[i].name,
+                'type': fileType,
+                'date': readableDate,
+                'size': fileString
+            })
+        }
+    });
+
+    // Function to download the media via ftp
+    socket.on('downloadMedia', function(filename) {
+        var fileSize;
+        // Get the size of the file we want to transfer
+        client.size(filename, function(err, filesize) {
+            fileSize = filesize;
+        });
+
+        // Start the transfer of the file
+        client.get(filename, function(err, stream) {
+            if (err) throw err;
+
+            var progress = setInterval(function() {
+                var stats = fs.statSync(filename);
+                var fileSizeInBytes = stats["size"];
+                console.log(Math.round((fileSizeInBytes / fileSize) * 100));
+            }, 500);
+
+            stream.once('close', function() {
+                console.log('Transfer complete!');
+                clearInterval(progress);
+            });
+
+            stream.pipe(fs.createWriteStream(filename));
+        });
+    })
+}
+
+function getFiles(client, files, directory, downloadIndex) {
+    if (downloadIndex === undefined) {
+        downloadIndex = 0;
+    }
+    client.get(files[downloadIndex], function(err, stream) {
+        if (err) throw err;
+        stream.once('close', function() {
+            console.log('Transfer complete: ' + files[downloadIndex]);
+            downloadIndex++;
+            if (downloadIndex != files.length) {
+                getFiles(client, files, directory, downloadIndex);
+            }
+            else {
+                // We are complete, so change directory and list actual files
+                setupDownloader(client);
+            }
+        });
+        stream.pipe(fs.createWriteStream(directory + '/' + files[downloadIndex]));
+    });
+}
+
+function downloadThumbnails(client) {
+    client.cwd('/internal_000/Bebop_2/thumb', function(err, wd) {console.log(wd);});
+    client.list(function (err, list) {
+        var thumbnails = [];
+        for (var i = 0; i < list.length; i++) {
+            thumbnails.push(list[i].name);
+        }
+        console.log(thumbnails);
+        getFiles(client, thumbnails, 'thumbnails');
+    });
+}
+
 var droneController = function(socketInstance) {
     var count = 0;
     var controller = this;
-    var socket = socketInstance;
+    socket = socketInstance;
     var bebop = require('node-bebop');
     var FtpClient = require('ftp');
     var NanoTimer = require('nanotimer');
-    var fs = require('fs');
     // Used this. so that it can be referenced by the initiator file
     this.drone = bebop.createClient();
     // Used just 'drone' here so that events below are more readable
@@ -191,37 +270,8 @@ var droneController = function(socketInstance) {
         var client = new FtpClient();
         client.on('ready', function() {
             console.log('FTP client is ready.');
-            this.cwd('internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
-            this.list(function (err, list) {
-                for (var i = 0; i < list.length; i++) {
-                    var readableDate = ISOToReadable((list[i].date).toISOString());
-                    var fileString = getFileSizeString(list[i].size);
-                    var fileType = filenameToMediaType(list[i].name);
-                    socket.emit('fileDetected', {
-                        'name': list[i].name,
-                        'type': fileType,
-                        'date': readableDate,
-                        'size': fileString
-                    })
-                }
-            });
 
-            // Function to download the media via ftp
-            socket.on('downloadMedia', function(filename) {
-                // Get the size of the file we want to transfer
-                client.size(filename, function(err, filesize) {
-                    console.log(filesize);
-                });
-                // Start the transfer of the file
-                client.get(filename, function(err, stream) {
-                    if (err) throw err;
-                    stream.once('close', function() {
-                        console.log('Transfer complete!');
-                    });
-                    stream.pipe(fs.createWriteStream(filename));
-                });
-
-            })
+            downloadThumbnails(client);
         });
         // Connect to the Bebop drone
         client.connect({'host': '192.168.42.1'});
