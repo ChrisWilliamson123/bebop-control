@@ -47,8 +47,15 @@ function applyTransferClickEvents() {
 
 socket.on('fileDetected', function(file) {
     files++;
-    console.log(file);
-    $('#fileTable').append('<div class="row" data-name="' + file.name + '"><p>' + files + ') ' + file.type + ' taken on ' + file.date + ' - ' + file.size + '</p><button class="transfer">Transfer</button></div>');
+    $('#fileTable').append('<div class="row" data-name="' + file.name + '"><p>' + files + ') ' + file.type + ' taken on ' + file.date + ' - ' + file.size + '</p><button class="transfer">Transfer</button><span></span></div>');
     $('.transfer').unbind('click');
     applyTransferClickEvents();
+});
+
+socket.on('downloadProgress', function(data) {
+    $('#fileTable').find('[data-name="' + data.name + '"]').find('span').text(data.progress + '%');
+});
+
+socket.on('downloadComplete', function(filename) {
+    $('#fileTable').find('[data-name="' + filename + '"]').find('span').text('Download complete!');
 });
