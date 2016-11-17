@@ -145,49 +145,62 @@ canvas {
   width: 700px;
   margin: 0 auto;
   background: white;
-  padding: 20px;
+  padding: 20px 40px;
   border-radius: 4px;
   color: black;
+  font-weight: 300;
 
-  .row {
-    margin: 15px 0;
-
-    .header {
-      overflow: auto;
-    }
-  }
-  
   h1 {
     text-align: center;
+    font-weight: 300;
+    margin-top: 0;
   }
 
-  p {
-    margin: 0;
-    float: left;
-  }
+  .row {
+    margin-bottom: 40px;
+    overflow: auto;
 
-  button, #fileSize {
-    float: right;
-  }
+    &:last-child {
+      margin-bottom: 0;
+    }
 
-  button {
-    margin-left: 10px;
-  }
+    img {
+      margin-top: 5px;
+    }
 
-  #progressBar {
-    height: 10px;
-    background: #67ff70;
-    display: inline-block;
-    margin-top: 10px;
-    transition: width 0.5s;
-    border-radius: 4px;
-  }
+    p {
+      margin: 0;
+    }
 
-  .circleProgressBar {
-    margin: 20px;
-    width: 200px;
-    height: 200px;
-    position: relative;
+    #fileInfo {
+      float: left;
+    }
+
+    #transferInformation {
+      float: right;
+
+      button {
+        margin-left: 10px;
+        background: transparent;
+        border: 1px solid black;
+        font-size: 20px;
+        height: 120px;
+        width: 150px;
+        font-weight: 300;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .circleProgressBar {
+        width: 120px;
+        height: 120px;
+        position: relative;
+        margin-right: 15px;
+        display: none;
+      }
+    }
   }
 }
 

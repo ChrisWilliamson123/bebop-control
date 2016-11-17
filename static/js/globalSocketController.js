@@ -40,6 +40,7 @@ socket.on('speedChange', function(speed) {
 
 function applyTransferClickEvents() {
     $('.transfer').click(function() {
+        $(this).text('Waiting...');
         console.log('here');
         // Get the file name
         var filename = $(this).parent().parent().data('name');
@@ -48,7 +49,18 @@ function applyTransferClickEvents() {
 }
 var bars = [];
 socket.on('fileDetected', function(file) {
-    $('#fileTable').append('<div class="row" data-name="' + file.name + '" data-index="' + files + '"><div class="header"><p>' + (files+1) + ') ' + file.type + ' taken on ' + file.date + '</p><button class="transfer">Transfer</button><span id="fileSize">' + file.size + '</span><div id="circleProgressBar' + files + '" class="circleProgressBar"></div></div><span id="progressBar"></span></div>');
+    $('#fileTable').append('<div class="row" data-name="' + file.name + '" data-index="' + files + '">' +
+        '<div id="fileInfo">' +
+        '<p>Type: ' + file.type + '</p>' +
+        '<p>Date taken: ' + file.date + '</p>' +
+        '<p>Size: ' + file.size + '</p>' +
+        '<img src="static/thumbnails/' + file.thumbnailName + '" />' +
+        '</div>' +
+        '<div id="transferInformation">' +
+        '<button class="transfer">Transfer</button>' +
+        '<div id="circleProgressBar' + files + '" class="circleProgressBar"></div>' +
+        '</div>' +
+        '</div>');
     var bar = new ProgressBar.Circle('#circleProgressBar' + files, {
         color: '#aaa',
         // This has to be the same size as the maximum width to
@@ -89,6 +101,9 @@ socket.on('fileDetected', function(file) {
 socket.on('downloadProgress', function(data) {
     var item = $('#fileTable').find('[data-name="' + data.name + '"]');
     // item.find('span#progressBar').css('width', data.progress + '%');
+    item.find('.circleProgressBar').show();
+    item.find('button').hide();
+    console.log(item);
     bars[parseInt(item.data('index'))].animate(data.progress / 100);
 });
 

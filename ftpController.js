@@ -21,9 +21,9 @@ var ftpController = function(socket) {
 
     function ISOToReadable(ISODate) {
         var split = ISODate.split('T');
-        var date = split[0];
-        var time = split[1].substr(0, 5);
-        return date + ' at ' + time;
+        var date = split[0].split('_')[2];
+        var time = split[1].substr(0, 4);
+        return date + ' at ' + time.substr(0, 2) + ':' + time.substr(2, 4);
     }
 
     function filenameToMediaType(filename) {
@@ -40,14 +40,25 @@ var ftpController = function(socket) {
         client.cwd('/internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
         client.list(function (err, list) {
             for (var i = 0; i < list.length; i++) {
-                var readableDate = ISOToReadable((list[i].date).toISOString());
+                console.log(list[i].name);
+                var readableDate = ISOToReadable(list[i].name);
                 var fileString = getFileSizeString(list[i].size);
                 var fileType = filenameToMediaType(list[i].name);
+
+                if (list[i].name.indexOf('mp4') >= 0) {
+                    var thumbnailName = list[i].name + '.jpg'
+                }
+                else {
+                    var thumbnailName = list[i].name.split('.')[0] + '.jpg';
+                }
+
+
                 socket.emit('fileDetected', {
                     'name': list[i].name,
                     'type': fileType,
                     'date': readableDate,
-                    'size': fileString
+                    'size': fileString,
+                    'thumbnailName': thumbnailName
                 })
             }
         });
@@ -116,7 +127,7 @@ var ftpController = function(socket) {
                 thumbnails.push(list[i].name);
             }
             console.log(thumbnails);
-            getFiles(thumbnails, 'thumbnails');
+            getFiles(thumbnails, 'static/thumbnails');
         });
     }
 };
