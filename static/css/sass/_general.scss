@@ -148,11 +148,13 @@ canvas {
   padding: 20px 40px;
   border-radius: 4px;
   color: black;
-  font-weight: 300;
+
+  h1, h2, h3, p, button {
+    font-weight: 300;
+  }
 
   h1 {
     text-align: center;
-    font-weight: 300;
     margin-top: 0;
   }
 
@@ -185,10 +187,10 @@ canvas {
         border: 1px solid black;
         font-size: 20px;
         height: 120px;
-        width: 150px;
-        font-weight: 300;
+        width: 120px;
         transition: width 1s;
         cursor: pointer;
+        border-radius: 50%;
 
         &:focus {
           outline: none;
@@ -203,7 +205,6 @@ canvas {
         width: 120px;
         height: 120px;
         position: relative;
-        margin-right: 15px;
         display: none;
       }
     }
