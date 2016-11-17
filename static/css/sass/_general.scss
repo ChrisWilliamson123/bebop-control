@@ -148,8 +148,52 @@ canvas {
   padding: 20px;
   border-radius: 4px;
   color: black;
+
+  .row {
+    margin: 15px 0;
+
+    .header {
+      overflow: auto;
+    }
+  }
   
   h1 {
     text-align: center;
   }
+
+  p {
+    margin: 0;
+    float: left;
+  }
+
+  button, #fileSize {
+    float: right;
+  }
+
+  button {
+    margin-left: 10px;
+  }
+
+  #progressBar {
+    height: 10px;
+    background: #67ff70;
+    display: inline-block;
+    margin-top: 10px;
+    transition: width 0.5s;
+    border-radius: 4px;
+  }
+
+  .circleProgressBar {
+    margin: 20px;
+    width: 200px;
+    height: 200px;
+    position: relative;
+  }
+}
+
+#droneFilesButton {
+  text-decoration: none;
+  position: absolute;
+  color: white;
+  right: calc((((50% - 407px) / 2) + 177px) - 85px);
 }

@@ -55,6 +55,7 @@ var ftpController = function(socket) {
         // Function to download the media via ftp
         socket.on('downloadMedia', function(filename) {
             var fileSize;
+            console.log(filename);
             // Get the size of the file we want to transfer
             client.size(filename, function(err, filesize) {
                 fileSize = filesize;

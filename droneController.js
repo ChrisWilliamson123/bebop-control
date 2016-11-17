@@ -144,9 +144,14 @@ var droneController = function(socketInstance) {
         console.log(data);
     });
 
+    drone.on('battery', function(percentage) {
+        console.log(percentage);
+    });
+
     socket.on('defaultSpeedChange', function(newSpeed) {
         controller.speed = newSpeed;
     });
+
 
     setTimeout(function() {
         emitBattery();
