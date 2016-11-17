@@ -187,10 +187,16 @@ canvas {
         height: 120px;
         width: 150px;
         font-weight: 300;
+        transition: width 1s;
+        cursor: pointer;
 
         &:focus {
           outline: none;
         }
+      }
+      
+      .selectBox {
+        display: none;
       }
 
       .circleProgressBar {

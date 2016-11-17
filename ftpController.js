@@ -19,11 +19,11 @@ var ftpController = function(socket) {
         }
     }
 
-    function ISOToReadable(ISODate) {
+    function filenameToReadableDate(ISODate) {
         var split = ISODate.split('T');
-        var date = split[0].split('_')[2];
+        var date = split[0].split('_')[2].split('-');
         var time = split[1].substr(0, 4);
-        return date + ' at ' + time.substr(0, 2) + ':' + time.substr(2, 4);
+        return date[2] + '/' + date[1] + '/' + date[0] + ' at ' + time.substr(0, 2) + ':' + time.substr(2, 4);
     }
 
     function filenameToMediaType(filename) {
@@ -41,7 +41,7 @@ var ftpController = function(socket) {
         client.list(function (err, list) {
             for (var i = 0; i < list.length; i++) {
                 console.log(list[i].name);
-                var readableDate = ISOToReadable(list[i].name);
+                var readableDate = filenameToReadableDate(list[i].name);
                 var fileString = getFileSizeString(list[i].size);
                 var fileType = filenameToMediaType(list[i].name);
 

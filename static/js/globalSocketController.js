@@ -38,15 +38,6 @@ socket.on('speedChange', function(speed) {
     lastSpeed = speed;
 });
 
-function applyTransferClickEvents() {
-    $('.transfer').click(function() {
-        $(this).text('Waiting...');
-        console.log('here');
-        // Get the file name
-        var filename = $(this).parent().parent().data('name');
-        socket.emit('downloadMedia', filename);
-    });
-}
 var bars = [];
 socket.on('fileDetected', function(file) {
     $('#fileTable').append('<div class="row" data-name="' + file.name + '" data-index="' + files + '">' +
@@ -58,6 +49,7 @@ socket.on('fileDetected', function(file) {
         '</div>' +
         '<div id="transferInformation">' +
         '<button class="transfer">Transfer</button>' +
+        '<input id="checkbox' + files + '" class="selectBox" type="checkbox" />' +
         '<div id="circleProgressBar' + files + '" class="circleProgressBar"></div>' +
         '</div>' +
         '</div>');
@@ -82,17 +74,18 @@ socket.on('fileDetected', function(file) {
             var value = Math.round(circle.value() * 100);
             if (value === 0) {
                 circle.setText('');
-            } else {
+            }
+            else if (value === 100) {
+                circle.setText('Done');
+            }
+            else {
                 circle.setText(value + '%');
             }
 
         }
     });
-    bars.push(bar);
-    // bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
     bar.text.style.fontSize = '2rem';
-
-    // bar.animate(1.0);  // Number from 0.0 to 1.0
+    bars.push(bar);
     $('.transfer').unbind('click');
     applyTransferClickEvents();
     files++;
@@ -101,9 +94,9 @@ socket.on('fileDetected', function(file) {
 socket.on('downloadProgress', function(data) {
     var item = $('#fileTable').find('[data-name="' + data.name + '"]');
     // item.find('span#progressBar').css('width', data.progress + '%');
-    item.find('.circleProgressBar').show();
+    item.find('.circleProgressBar').fadeIn();
     item.find('button').hide();
-    console.log(item);
+    var progressWheelValue = data.progress / 100;
     bars[parseInt(item.data('index'))].animate(data.progress / 100);
 });
 
