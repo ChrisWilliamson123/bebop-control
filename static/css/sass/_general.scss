@@ -216,4 +216,10 @@ canvas {
   position: absolute;
   color: white;
   right: calc((((50% - 407px) / 2) + 177px) - 85px);
+  border: 1px solid white;
+}
+
+button:focus {
+  outline: none;
+  cursor: pointer;
 }

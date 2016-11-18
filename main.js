@@ -20,6 +20,9 @@ app.get('/xbox-controller', function (req, res) {
 app.get('/leap', function (req, res) {
     res.sendFile('static/templates/leap.html', { root: __dirname });
 });
+app.get('/keyboard', function (req, res) {
+    res.sendFile('static/templates/keyboard.html', { root: __dirname });
+});
 http.listen(8001, function() {
     console.log("Listening on port 8001");
 });
@@ -44,7 +47,14 @@ io.on('connection', function (socket) {
         console.log('User has chosen Leap Motion as input device');
         var leap = require('./leapController');
         leap.init(socket);
-    })
+    });
+
+    // If the user chooses keyboard, set up the module and initialise
+    socket.on('keyboardInitialised', function() {
+        console.log('User has chosen keyboard as input device');
+        var keyboard = require('./keyboardController');
+        keyboard.init(socket);
+    });
 });
 
 // The following will catch uncaught exceptions.

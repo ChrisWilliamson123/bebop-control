@@ -1,107 +1,119 @@
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Leap - Bebop Control</title>
-    <link rel="stylesheet" href="static/css/main.css" />
-    <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
-    <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
-    <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
-</head>
-<body id="main">
-<div id="top-bar">
-    <div id="connection-status" class="backgrounded rectangle">
-        <p>Leap: <span id="controller">Disconnected</span> | Drone: <span id="drone" class="connected">Connected</span></p>
-    </div>
+    <head>
+        <meta charset="UTF-8">
+        <title>Leap - Bebop Control</title>
+        <link rel="stylesheet" href="static/css/main.css" />
+        <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
+        <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
+    </head>
 
-    <div id="battery" class="backgrounded rectangle">Battery: <span>waiting...</span></div>
-    <div id="altitude" class="backgrounded rectangle">Distance: <span id="distance">0</span>m</div>
-</div>
-
-<a href="#calibrationPopup" class="open-popup" id="calibrate">Calibrate Zones</a>
-
-<div id="speed" class="backgrounded square">
-    <p>
-        <label for="amount">Drone speed:</label>
-        <span id="amount"></span>
-    </p>
-
-    <div id="slider"></div>
-</div>
-
-<div id="wifi" class="backgrounded square">
-    <label for="wifiStrength">WiFi strength</label>
-    <div id="wifiStrength"></div>
-</div>
-
-<div id="handStatus" class="backgrounded square">
-    <div id="leapGrid">
-        <div id="left" class="zone"></div>
-        <div id="right" class="zone"></div>
-        <div id="forward" class="zone"></div>
-        <div id="backward" class="zone"></div>
-    </div>
-
-    <div id="handHeight">
-        <div id="heightSlider"></div>
-        <div id="upIndicator" class="movementIndicator"></div>
-        <div id="downIndicator" class="movementIndicator"></div>
-    </div>
-</div>
-
-<div id="chart"></div>
-
-<div id="calibrationPopup" class="mfp-hide">
-    <div id="initialCheck">
-        <p>To control the drone with the Leap Motion, your hand needs to move to different zones in the Leap's view space. For example, having your hand in the left side area will move the drone left.</p>
-        <p>Would you like to use the default calibration or create your own?</p>
-        <div id="confirmation-buttons">
-            <button id="ownCalibration">Create my own</button>
-            <button id="initialCalibration">Use default</button>
-        </div>
-    </div>
-    <div id="mainContent">
-        <h2>Welcome to the calibration wizard</h2>
-        <p>The box below represents the space that the Leap Motion can detect.</p>
-        <p>If your right hand is in view of the Leap, it will appear as a black dot inside the grid.</p>
-        <p>When the calibration zone changes (left, right, forward, backward, up, down), move your hand to the position that accompanies that movement, for example, if the direction is forward, you would move your hand to the forward position.</p>
-        <p>Once you have reached a comfortable position for that direction, make a fist until the bar is fully filled seconds and your choice will be confirmed.</p>
-        <p>The gif on the right hand side will change depending on which direction you should be calibrating, which will be a guide to where your hand should be.</p>
-        <h3>Calibration Direction: <span id="calibrationDirection"></span></h3>
-        <div id="calibrationSlider"></div>
-        <div id="calibrationGridContainer">
-            <div id="calibrationGrid">
+    <body id="main">
+        <div id="top-bar">
+            <div id="connection-status" class="backgrounded rectangle">
+                <p>Leap: <span id="controller">Disconnected</span> | Drone: <span id="drone" class="connected">Connected</span></p>
             </div>
-            <img src="static/img/left.gif" />
-        </div>
-    </div>
-    <div id="calibrationComplete">
-        <h2>Calibration complete</h2>
-        <p>You will now be returned to the main page, where your new calibration will be applied.</p>
-    </div>
-</div>
 
-<script>
-    var lastAltitude = 0;
-    var lastSpeed = 0;
-    var graphTick = '';
-</script>
-<script src="/socket.io/socket.io.js"></script>
-<script>
-    var socket = io('http://localhost:8001');
-    socket.emit('leapInitialised');
-</script>
-<script src="static/js/jquery.min.js"></script>
-<script src="static/js/jquery-ui.js"></script>
-<script src="static/js/magnificPopup.min.js"></script>
-<script src="static/js/leap-api.js"></script>
-<script src="static/js/leap-plugins.js"></script>
-<script src="static/js/leapController.js"></script>
-<script src="static/js/sliders.js"></script>
-<script src="static/js/globalSocketController.js"></script>
-<script src="static/js/video-client-bundle.js"></script>
-<script src="static/js/d3.min.js"></script>
-<script src="static/js/c3.min.js"></script>
-<script src="static/js/graphs.js"></script>
-<script src="static/js/leapPopups.js"></script>
-</body>
+            <div id="battery" class="backgrounded rectangle">Battery: <span>waiting...</span></div>
+            <div id="altitude" class="backgrounded rectangle">Distance: <span id="distance">0</span>m</div>
+
+            <a id="droneFilesButton" href="#filesPopup" class="open-files-popup backgrounded rectangle" id="files">File Browser</a>
+        </div>
+
+        <a href="#calibrationPopup" class="open-popup" id="calibrate">Calibrate Zones</a>
+
+        <div id="speed" class="backgrounded square">
+            <p>
+                <label for="amount">Drone speed:</label>
+                <span id="amount"></span>
+            </p>
+
+            <div id="slider"></div>
+        </div>
+
+        <div id="wifi" class="backgrounded square">
+            <label for="wifiStrength">WiFi strength</label>
+            <div id="wifiStrength"></div>
+        </div>
+
+        <div id="handStatus" class="backgrounded square">
+            <div id="leapGrid">
+                <div id="left" class="zone"></div>
+                <div id="right" class="zone"></div>
+                <div id="forward" class="zone"></div>
+                <div id="backward" class="zone"></div>
+            </div>
+
+            <div id="handHeight">
+                <div id="heightSlider"></div>
+                <div id="upIndicator" class="movementIndicator"></div>
+                <div id="downIndicator" class="movementIndicator"></div>
+            </div>
+        </div>
+
+        <div id="chart"></div>
+
+        <div id="calibrationPopup" class="mfp-hide">
+            <div id="initialCheck">
+                <p>To control the drone with the Leap Motion, your hand needs to move to different zones in the Leap's view space. For example, having your hand in the left side area will move the drone left.</p>
+                <p>Would you like to use the default calibration or create your own?</p>
+                <div id="confirmation-buttons">
+                    <button id="ownCalibration">Create my own</button>
+                    <button id="initialCalibration">Use default</button>
+                </div>
+            </div>
+            <div id="mainContent">
+                <h2>Welcome to the calibration wizard</h2>
+                <p>The box below represents the space that the Leap Motion can detect.</p>
+                <p>If your right hand is in view of the Leap, it will appear as a black dot inside the grid.</p>
+                <p>When the calibration zone changes (left, right, forward, backward, up, down), move your hand to the position that accompanies that movement, for example, if the direction is forward, you would move your hand to the forward position.</p>
+                <p>Once you have reached a comfortable position for that direction, make a fist until the bar is fully filled seconds and your choice will be confirmed.</p>
+                <p>The gif on the right hand side will change depending on which direction you should be calibrating, which will be a guide to where your hand should be.</p>
+                <h3>Calibration Direction: <span id="calibrationDirection"></span></h3>
+                <div id="calibrationSlider"></div>
+                <div id="calibrationGridContainer">
+                    <div id="calibrationGrid">
+                    </div>
+                    <img src="static/img/left.gif" />
+                </div>
+            </div>
+            <div id="calibrationComplete">
+                <h2>Calibration complete</h2>
+                <p>You will now be returned to the main page, where your new calibration will be applied.</p>
+            </div>
+        </div>
+
+        <div id="filesPopup" class="mfp-hide">
+            <h1>Drone Memory</h1>
+            <div id="fileTable">
+            </div>
+        </div>
+
+        <script>
+            var lastAltitude = 0;
+            var lastSpeed = 0;
+            var graphTick = '';
+            var files = 0;
+        </script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io('http://localhost:8001');
+            socket.emit('leapInitialised');
+        </script>
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/jquery-ui.js"></script>
+        <script src="static/js/magnificPopup.min.js"></script>
+        <script src="static/js/leap-api.js"></script>
+        <script src="static/js/leap-plugins.js"></script>
+        <script src="static/js/leapController.js"></script>
+        <script src="static/js/sliders.js"></script>
+        <script src="static/js/globalSocketController.js"></script>
+        <script src="static/js/video-client-bundle.js"></script>
+        <script src="static/js/d3.min.js"></script>
+        <script src="static/js/c3.min.js"></script>
+        <script src="static/js/graphs.js"></script>
+        <script src="static/js/leapPopups.js"></script>
+        <script src="static/js/progressBar.min.js"></script>
+        <script src="static/js/filesPopup.js"></script>
+    </body>
 </html>

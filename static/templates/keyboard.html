@@ -1,0 +1,103 @@
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Xbox - Bebop Control</title>
+
+        <link rel="stylesheet" type="text/css" href="static/css/main.css">
+        <link rel="stylesheet" type="text/css" href="static/css/jquery-ui.css">
+        <link rel="stylesheet" type="text/css" href="static/css/c3.min.css">
+        <link rel="stylesheet" type="text/css" href="static/css/magnific.css">
+    </head>
+
+    <body id="xbox">
+        <div id="main">
+            <div id="top-bar">
+                <div id="connection-status" class="backgrounded rectangle">
+                    <p>Controller: <span id="controller" class="connected">Connected</span> | Drone: <span id="drone" class="connected">Connected</span></p>
+                </div>
+
+                <div id="battery" class="backgrounded rectangle">Battery: <span>waiting...</span></div>
+                <div id="altitude" class="backgrounded rectangle">Distance: <span id="distance">0</span>m</div>
+
+                <a id="droneFilesButton" href="#filesPopup" class="open-files-popup backgrounded rectangle" id="files">File Browser</a>
+            </div>
+
+            <div id="speed" class="backgrounded square">
+                <p>
+                    <label for="amount">Drone speed:</label>
+                    <span id="amount"></span>
+                </p>
+
+                <div id="slider"></div>
+            </div>
+
+            <div id="wifi" class="backgrounded square">
+                <label for="wifiStrength">WiFi strength</label>
+                <div id="wifiStrength"></div>
+            </div>
+
+            <div id="wasd">
+                <div id="w">
+                    <span>W</span>
+                </div>
+                <div id="a">
+                    <span>A</span>
+                </div>
+                <div id="s">
+                    <span>S</span>
+                </div>
+                <div id="d">
+                    <span>D</span>
+                </div>
+            </div>
+
+            <div id="uldr">
+                <div id="u">
+                    <span>&uarr;</span>
+                </div>
+                <div id="l">
+                    <span>&larr;</span>
+                </div>
+                <div id="down">
+                    <span>&darr;</span>
+                </div>
+                <div id="r">
+                    <span>&rarr;</span>
+                </div>
+            </div>
+
+            <div id="chart"></div>
+        </div>
+
+        <div id="filesPopup" class="mfp-hide">
+            <h1>Drone Memory</h1>
+            <!--<button id="selectMode">Multi-select</button>-->
+            <!--<button id="transferAll">Transfer all</button>-->
+            <div id="fileTable">
+            </div>
+        </div>
+
+        <script>
+            var lastAltitude = 0;
+            var lastSpeed = 0;
+            var graphTick = '';
+            var files = 0;
+        </script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io('http://localhost:8001');
+        </script>
+        <script src="static/js/jquery.min.js"></script>
+        <script src="static/js/jquery-ui.js"></script>
+        <script src="static/js/progressBar.min.js"></script>
+        <script src="static/js/magnificPopup.min.js"></script>
+        <script src="static/js/sliders.js"></script>
+        <script src="static/js/video-client-bundle.js"></script>
+        <script src="static/js/d3.min.js"></script>
+        <script src="static/js/c3.min.js"></script>
+        <script src="static/js/graphs.js"></script>
+        <script src="static/js/keyboardMovementController.js"></script>
+        <script src="static/js/globalSocketController.js"></script>
+        <script src="static/js/filesPopup.js"></script>
+    </body>
+</html>
