@@ -56,27 +56,3 @@ io.on('connection', function (socket) {
         keyboard.init(socket);
     });
 });
-
-// The following will catch uncaught exceptions.
-// For example, if we disconnect the WiFi or try to make too many connections to the drone
-var handlingUnreachable = false;
-// process.on('uncaughtException', function(err) {
-//     // handle the error safely
-//     if (err.code == 'ENETUNREACH' && !handlingUnreachable) {
-//         handlingUnreachable = true;
-//         // Drone is unreachable
-//         console.log('Network changed / Drone is unreachable');
-//         // Initialise the wifi module, passing in our socket and our wifiEvent listener
-//         wifi.init(io, wifiEvents);
-//         // Start the process of searching and connecting to the drone's wifi
-//         wifi.connectDroneWifi();
-//         // Once we have connected to the drone's wifi, connect the app to the drone
-//         wifiEvents.on('connectDrone', function() {
-//             droneController.connectDrone();
-//             handlingUnreachable = false;
-//         });
-//     }
-//     else {
-//         console.log(err);
-//     }
-// });

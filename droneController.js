@@ -171,6 +171,12 @@ var droneController = function(socketInstance) {
         // Connect to the Bebop drone
         ftpController.client.connect({'host': '192.168.42.1'});
     });
+
+    this.reconnect = function() {
+        drone.connect(function() {
+            console.log('Drone successfully reconnected.')
+        });
+    }
 };
 
 module.exports = droneController;

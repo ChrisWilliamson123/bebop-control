@@ -4,6 +4,7 @@ function init(socketInstance) {
     droneController = new droneControllerFile(socket);
     drone = droneController.drone;
 
+    // Maps key IDs to drone functions
     var keysToFunctions = {
         87: 'drone.forward(droneController.speed)',
         65: 'drone.left(droneController.speed)',
