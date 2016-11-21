@@ -23,7 +23,7 @@ var ftpController = function(socket) {
     // This takes a filename, which will include date and time.
     // Returns a readable sentance with the date and time.
     function filenameToReadableDate(filename) {
-        var split = ISODate.split('T');
+        var split = filename.split('T');
         var date = split[0].split('_')[2].split('-');
         var time = split[1].substr(0, 4);
         return date[2] + '/' + date[1] + '/' + date[0] + ' at ' + time.substr(0, 2) + ':' + time.substr(2, 4);
@@ -37,6 +37,16 @@ var ftpController = function(socket) {
         }
         else {
             return 'Image (' + fileType + ')';
+        }
+    }
+
+    function getThumbnailName(filename) {
+        // Set up the thumbnail name, depends on the filetype
+        if (filename.indexOf('mp4') >= 0) {
+            return filename + '.jpg';
+        }
+        else {
+            return filename.split('.')[0] + '.jpg';
         }
     }
 
@@ -55,13 +65,7 @@ var ftpController = function(socket) {
                 // Get the file type
                 var fileType = filenameToMediaType(list[i].name);
 
-                // Set up the thumbnail name, depends on the filetype
-                if (list[i].name.indexOf('mp4') >= 0) {
-                    var thumbnailName = list[i].name + '.jpg'
-                }
-                else {
-                    var thumbnailName = list[i].name.split('.')[0] + '.jpg';
-                }
+                var thumbnailName = getThumbnailName(list[i].name);
 
                 // Send the file to the frontend
                 socket.emit('fileDetected', {
@@ -141,6 +145,30 @@ var ftpController = function(socket) {
         });
     }
 
+    function deleteFile(filename) {
+        // Change to the media directory
+        client.cwd('/internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
+        console.log('Deleting ' + filename + '...');
+        // Delete the file
+        client.delete(filename, function(err) {
+            if (err) throw err;
+            else {
+                console.log(filename + ' deleted successfully.');
+                socket.emit('fileDeleted', filename);
+
+                // Get the thumbnail name
+                var thumbnailName = getThumbnailName(filename);
+                client.cwd('/internal_000/Bebop_2/thumb', function(err, wd) {console.log(wd);});
+                client.delete(thumbnailName, function(err) {
+                    if (err) throw err;
+                    else {
+                        console.log('Thumbnail also deleted.');
+                    }
+                })
+            }
+        });
+    }
+
     // Initialiser to download thumbnails
     this.downloadThumbnails = function() {
         // Change to the thumbnailing directory
@@ -155,7 +183,11 @@ var ftpController = function(socket) {
             // Start downloading them
             getFiles(thumbnails, 'static/thumbnails');
         });
-    }
+    };
+
+    socket.on('deleteFile', function(filename) {
+        deleteFile(filename);
+    });
 };
 
 module.exports = ftpController;

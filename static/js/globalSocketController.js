@@ -48,6 +48,7 @@ socket.on('fileDetected', function(file) {
         '<img src="static/thumbnails/' + file.thumbnailName + '" />' +
         '</div>' +
         '<div id="transferInformation">' +
+        '<button class="delete">Delete</button>' +
         '<button class="transfer">Transfer</button>' +
         '<input id="checkbox' + files + '" class="selectBox" type="checkbox" />' +
         '<div id="circleProgressBar' + files + '" class="circleProgressBar"></div>' +
@@ -88,6 +89,7 @@ socket.on('fileDetected', function(file) {
     bars.push(bar);
     $('.transfer').unbind('click');
     applyTransferClickEvents();
+    applyDeleteClickEvents();
     files++;
 });
 
@@ -95,7 +97,7 @@ socket.on('downloadProgress', function(data) {
     var item = $('#fileTable').find('[data-name="' + data.name + '"]');
     // item.find('span#progressBar').css('width', data.progress + '%');
     item.find('.circleProgressBar').fadeIn();
-    item.find('button').hide();
+    item.find('button.transfer').hide();
     var progressWheelValue = data.progress / 100;
     bars[parseInt(item.data('index'))].animate(data.progress / 100);
 });
@@ -104,4 +106,23 @@ socket.on('downloadComplete', function(filename) {
     var item = $('#fileTable').find('[data-name="' + filename + '"]');
     // item.find('span#progressBar').css('width', data.progress + '%');
     bars[parseInt(item.data('index'))].animate(1);
+});
+
+function applyDeleteClickEvents() {
+    $('.delete').off();
+    $('.delete').click(function() {
+        $(this).text('Waiting...');
+        // Get the file name
+        var filename = $(this).parent().parent().data('name');
+        console.log(filename);
+        socket.emit('deleteFile', filename);
+    });
+}
+
+socket.on('fileDeleted', function(filename) {
+    var item = $('#fileTable').find('[data-name="' + filename + '"]');
+    item.fadeOut();
+    setTimeout(function() {
+        item.remove();
+    }, 3000);
 });

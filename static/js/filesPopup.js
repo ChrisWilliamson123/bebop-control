@@ -3,6 +3,7 @@ $('.open-files-popup').magnificPopup({
 });
 
 function applyTransferClickEvents() {
+    $('.transfer').off();
     $('.transfer').click(function() {
         $(this).text('Waiting...');
         console.log('here');

@@ -195,6 +195,11 @@ canvas {
         &:focus {
           outline: none;
         }
+
+        &.delete {
+          border: 1px solid red;
+          color: red;
+        }
       }
       
       .selectBox {
@@ -206,6 +211,8 @@ canvas {
         height: 120px;
         position: relative;
         display: none;
+        margin-left: 10px;
+        float: right;
       }
     }
   }
