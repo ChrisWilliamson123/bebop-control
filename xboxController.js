@@ -40,10 +40,9 @@ function restartMovement() {
     }
 }
 
-function init(socketInstance) {
+function init(socketInstance, droneControllerInstance) {
     socket = socketInstance;
-    var droneControllerFile = require('./droneController');
-    droneController = new droneControllerFile(socket);
+    droneController = droneControllerInstance;
     drone = droneController.drone;
 
     xbox.on('connected', function(){

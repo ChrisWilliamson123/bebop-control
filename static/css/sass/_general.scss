@@ -141,7 +141,7 @@ canvas {
   }
 }
 
-#filesPopup {
+#filesPopup, #wifiPopup {
   width: 700px;
   margin: 0 auto;
   background: white;
@@ -216,6 +216,10 @@ canvas {
       }
     }
   }
+}
+
+#wifiPopup {
+  display: none;
 }
 
 #droneFilesButton {

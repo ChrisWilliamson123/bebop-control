@@ -1,14 +1,17 @@
 // Load the wifi control package
-var WiFiControl = require('wifi-control');
-var freeToScan = true;
-var scanner = '';
-var socket = '';
-var events = '';
+var WiFiControl = require('wifi-control'),
+    freeToScan = true,
+    scanner,
+    socket,
+    events;
 
 // Set up the socket and event objects
-function init(socketInstance, eventEmitter) {
+function init(socketInstance, eventEmitterInstance) {
     socket = socketInstance;
-    events = eventEmitter;
+    events = eventEmitterInstance || false;
+    if (events) {
+        console.log('Events active');
+    }
 }
 //  Initialize wifi-control package
 function initialiseWifi() {
@@ -19,7 +22,8 @@ function initialiseWifi() {
 // Returns true if the wifi network we are connected to is a Bebop 2 network.
 function alreadyConnectedToDrone() {
     var ifaceState = WiFiControl.getIfaceState();
-    if (ifaceState.ssid.indexOf('Bebop') == 0) {
+    console.log(ifaceState);
+    if (ifaceState.ssid != undefined && ifaceState.ssid.indexOf('Bebop') == 0) {
         return true;
     }
     return false;
@@ -30,14 +34,15 @@ function networkScan() {
     freeToScan = false;
     WiFiControl.scanForWiFi( function(err, response) {
         if (err) console.log(err);
-
         var networks = response.networks;
+        // console.log(networks);
         // Loop through all found networks.
         // If we find a Bebop 2 network, set the wifi name and remove the scanner interval.
         for (var i = 0; i < networks.length; i++) {
             var network = networks[i];
             var SSID = network.ssid;
             if (SSID.indexOf('Bebop') == 0) {
+                console.log('Bebop network found.');
                 droneWiFiName = SSID;
                 removeScanner();
             }
@@ -61,6 +66,9 @@ function connectToNetwork(SSID) {
         if (err) console.log(err);
         if (response.success) {
             socket.emit('droneWifiConnected');
+            if (events) {
+                events.emit('wifiConnected');
+            }
         }
     });
 }

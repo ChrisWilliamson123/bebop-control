@@ -1,13 +1,12 @@
 // Setting up the modules
-var EventEmitter = require('events').EventEmitter,
-    express = require('express'),
+var express = require('express'),
     app = express(),
     wifi = require('./wifiController'),
     http = require('http').Server(app),
     io = require('socket.io')(http),
     path = require('path'),
-    wifiEvents = new EventEmitter(),
-    droneController = require('./droneController');
+    droneControllerFile = require('./droneController'),
+    errorControllerFile = require('./errorController');
 
 // Setting up static and getting the hompage
 app.use(express.static('.'));
@@ -30,7 +29,7 @@ http.listen(8001, function() {
 io.on('connection', function (socket) {
     socket.on('appInitialised', function() {
         // Initialise the wifi module, passing in our socket and our wifiEvent listener
-        wifi.init(socket, wifiEvents);
+        wifi.init(socket);
         // Start the process of searching and connecting to the drone's wifi
         wifi.connectDroneWifi();
     });
@@ -39,7 +38,9 @@ io.on('connection', function (socket) {
     socket.on('xboxInitialised', function() {
         console.log('User has chosen Xbox controller as input device');
         var xbox = require('./xboxController');
-        xbox.init(socket);
+        var droneController = new droneControllerFile(socket);
+        xbox.init(socket, droneController);
+        var errorController = new errorControllerFile(socket, droneController, wifi);
     });
 
     // If the user chooses Leap Motion, set up the module and initialise
@@ -47,6 +48,7 @@ io.on('connection', function (socket) {
         console.log('User has chosen Leap Motion as input device');
         var leap = require('./leapController');
         leap.init(socket);
+        var error
     });
 
     // If the user chooses keyboard, set up the module and initialise
@@ -54,5 +56,6 @@ io.on('connection', function (socket) {
         console.log('User has chosen keyboard as input device');
         var keyboard = require('./keyboardController');
         keyboard.init(socket);
+        var error
     });
 });

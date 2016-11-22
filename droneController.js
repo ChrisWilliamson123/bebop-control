@@ -61,7 +61,7 @@ var droneController = function(socketInstance) {
     this.panTiltStep = 10;
 
     emitBattery = function() {
-        socket.emit('battery', drone.navData['battery']);
+
     };
 
     drone.on('takingOff', function() {
@@ -145,11 +145,19 @@ var droneController = function(socketInstance) {
     });
 
     drone.on('battery', function(percentage) {
-        console.log(percentage);
+        socket.emit('battery', percentage);
     });
 
     socket.on('defaultSpeedChange', function(newSpeed) {
         controller.speed = newSpeed;
+    });
+
+    drone.on('ready', function() {
+        console.log('Drone connected');
+    });
+
+    drone.on('Disconnection', function() {
+        console.log('Drone disconnected');
     });
 
 
@@ -159,8 +167,6 @@ var droneController = function(socketInstance) {
 
     // As soon as we build a new object, the app will connect to the drone.
     drone.connect(function() {
-        console.log('Drone connected');
-
         var ftpControllerFile = require('./ftpController');
         var ftpController = new ftpControllerFile(socket);
         ftpController.client.on('ready', function() {
@@ -171,12 +177,6 @@ var droneController = function(socketInstance) {
         // Connect to the Bebop drone
         ftpController.client.connect({'host': '192.168.42.1'});
     });
-
-    this.reconnect = function() {
-        drone.connect(function() {
-            console.log('Drone successfully reconnected.')
-        });
-    }
 };
 
 module.exports = droneController;

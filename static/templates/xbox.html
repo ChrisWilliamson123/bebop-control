@@ -74,6 +74,12 @@
             </div>
         </div>
 
+        <div id="wifiPopup">
+            <h1>Warning!<br/>WiFi connection lost</h1>
+            <p>The application will try to reconnect to the drone, please be patient.</p>
+            <p>If the drone has not reconnected in 30 seconds, the drone's return to home feature will be activated.</p>
+        </div>
+
         <script>
             var lastAltitude = 0;
             var lastSpeed = 0;
@@ -97,5 +103,6 @@
         <script src="static/js/xboxSocketController.js"></script>
         <script src="static/js/globalSocketController.js"></script>
         <script src="static/js/filesPopup.js"></script>
+        <script src="static/js/errorPopups.js"></script>
     </body>
 </html>
