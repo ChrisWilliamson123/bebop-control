@@ -171,6 +171,7 @@ Leap.loop({enableGestures: true}, function(frame) {
     // If we only detect the right hand
     else if (handCount == 1 && frame.hands[0].type == 'right') {
         var hand = frame.hands[0];
+        console.log('here');
         // If we're calibrating, move the dot and check the calbration status
         if (calibrationTime) {
             var calibrationDot = (calibrationHands[0] || (calibrationHands[0] = new CalibrationDot()));

@@ -1,7 +1,6 @@
-function init(socketInstance) {
+function init(socketInstance, droneControllerInstance) {
     socket = socketInstance;
-    var droneControllerFile = require('./droneController');
-    droneController = new droneControllerFile(socket);
+    droneController = droneControllerInstance;
     drone = droneController.drone;
 
     // Maps key IDs to drone functions

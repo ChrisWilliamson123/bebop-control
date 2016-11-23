@@ -60,8 +60,12 @@ var droneController = function(socketInstance) {
     this.currentPan = 0;
     this.panTiltStep = 10;
 
-    emitBattery = function() {
 
+    this.resetDrone = function() {
+        this.drone = bebop.createClient();
+        this.drone.connect(function() {
+            console.log('Drone successfully reconnected');
+        })
     };
 
     drone.on('takingOff', function() {
@@ -160,10 +164,6 @@ var droneController = function(socketInstance) {
         console.log('Drone disconnected');
     });
 
-
-    setTimeout(function() {
-        emitBattery();
-    }, 10000);
 
     // As soon as we build a new object, the app will connect to the drone.
     drone.connect(function() {

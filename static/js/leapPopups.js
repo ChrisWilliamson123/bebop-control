@@ -26,6 +26,7 @@ $('.open-popup').magnificPopup({
 $('#initialCalibration').click(function() {
     magnificPopup.close();
     calibrationValues = initialCalibrationValues;
+    calibrationApplied = true;
     applyZoneCSS();
 });
 

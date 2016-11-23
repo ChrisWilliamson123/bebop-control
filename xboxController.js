@@ -75,6 +75,7 @@ function init(socketInstance, droneControllerInstance) {
 
     xbox.within('righttrigger', [triggerThreshold+1,255], function(err, data){
         drone.up(droneController.speed);
+        console.log(droneController.speed);
         keyController.addKey("RT");
         var pixelFillWidth = ((data/256) * 100 * 2) - 6;
         socket.emit('trigger', {side: 'right', fillAmount: pixelFillWidth});

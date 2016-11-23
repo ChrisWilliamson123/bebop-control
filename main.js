@@ -37,8 +37,8 @@ io.on('connection', function (socket) {
     // If the user chooses xbox controller, set up the module and initialise
     socket.on('xboxInitialised', function() {
         console.log('User has chosen Xbox controller as input device');
-        var xbox = require('./xboxController');
         var droneController = new droneControllerFile(socket);
+        var xbox = require('./xboxController');
         xbox.init(socket, droneController);
         var errorController = new errorControllerFile(socket, droneController, wifi);
     });
@@ -46,16 +46,18 @@ io.on('connection', function (socket) {
     // If the user chooses Leap Motion, set up the module and initialise
     socket.on('leapInitialised', function() {
         console.log('User has chosen Leap Motion as input device');
+        var droneController = new droneControllerFile(socket);
         var leap = require('./leapController');
-        leap.init(socket);
-        var error
+        leap.init(socket, droneController);
+        var errorController = new errorControllerFile(socket, droneController, wifi);
     });
 
     // If the user chooses keyboard, set up the module and initialise
     socket.on('keyboardInitialised', function() {
         console.log('User has chosen keyboard as input device');
+        var droneController = new droneControllerFile(socket);
         var keyboard = require('./keyboardController');
-        keyboard.init(socket);
-        var error
+        keyboard.init(socket, droneController);
+        var errorController = new errorControllerFile(socket, droneController, wifi);
     });
 });

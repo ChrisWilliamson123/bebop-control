@@ -14,7 +14,7 @@ var errorController = function(socketInstance, droneControllerInstance, wifiCont
 
     process.on('uncaughtException', function(err) {
         if ((err.errno === 'EADDRNOTAVAIL' || err.errno ==='ENETUNREACH') && !handlingError) {
-            droneController.drone._d2cServer.close();
+            // droneController.drone._d2cServer.close();
             handlingError = true;
             console.log('WiFi network changed.');
             socket.emit('WiFiDisconnected');
@@ -27,8 +27,8 @@ var errorController = function(socketInstance, droneControllerInstance, wifiCont
     });
 
     eventEmitter.on('wifiConnected', function() {
-        droneController = new droneControllerFile()
         handlingError = false;
+        droneController.resetDrone();
     })
 };
 
