@@ -213,6 +213,17 @@ function rightHandController(hand) {
     var newDirections = [];
     // An [x, y, z] unit vector of the hands position relative to the center of the Leap Motion's view
     var position = hand.palmPosition;
+    // The roll angle in radians
+    var roll = hand.roll();
+
+    // If below -0.8
+    // if above 0.4
+    if (roll <= -0.8) {
+        addDirection('clockwise', newDirections);
+    }
+    else if (roll >= 0.4) {
+        addDirection('counterClockwise', newDirections);
+    }
 
     // Get the x distance of the hand from the center of the Motion's view
     var xDistance = position[0];
