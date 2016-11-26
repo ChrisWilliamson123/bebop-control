@@ -148,13 +148,13 @@ canvas {
   padding: 20px 40px;
   border-radius: 4px;
   color: black;
+  text-align: center;
 
   h1, h2, h3, p, button {
     font-weight: 300;
   }
 
   h1 {
-    text-align: center;
     margin-top: 0;
   }
 
@@ -233,4 +233,8 @@ canvas {
 button:focus {
   outline: none;
   cursor: pointer;
+}
+
+.error {
+  color: red;
 }
