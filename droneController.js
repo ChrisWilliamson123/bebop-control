@@ -117,7 +117,6 @@ var droneController = function(socketInstance) {
     });
 
     drone.on('video', function (data) {
-        console.log('data');
         socket.emit('data', data.toString('base64'));
     });
 
@@ -125,13 +124,13 @@ var droneController = function(socketInstance) {
         console.log(data);
         if (data.enabled == 'enabled') {
             controller.recording = true;
-            // drone.startRecording();
-            // drone.getVideoStream();
+            drone.startRecording();
+            drone.getVideoStream();
             console.log('Drone is recording to internal storage.');
         }
         else {
             controller.recording = false;
-            // drone.stopRecording();
+            drone.stopRecording();
             console.log('Drone is not recording.')
         }
     });
@@ -169,13 +168,13 @@ var droneController = function(socketInstance) {
     drone.connect(function() {
         var ftpControllerFile = require('./ftpController');
         var ftpController = new ftpControllerFile(socket);
+        ftpController.client.connect({'host': '192.168.42.1'});
         ftpController.client.on('ready', function() {
             console.log('FTP client is ready.');
-
             ftpController.downloadThumbnails(client);
         });
-        // Connect to the Bebop drone
-        ftpController.client.connect({'host': '192.168.42.1'});
+        drone.MediaStreaming.videoEnable(1);
+        drone.getVideoStream();
     });
 };
 

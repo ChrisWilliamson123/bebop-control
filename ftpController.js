@@ -6,6 +6,9 @@ var ftpController = function(socket) {
     // Connect to the drone FTP file system
     this.client = new FtpClient();
     client = this.client;
+    var mainFolderName;
+
+
 
     // This is used for viewing the files on the drone.
     // Returns the human readable file size
@@ -53,7 +56,7 @@ var ftpController = function(socket) {
     // This function is used to setup the list of files in the browser
     function setupDownloader() {
         // Change directory to the drone's media directory
-        client.cwd('/internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
+        client.cwd('/internal_000/' + mainFolderName + '/media', function(err, wd) {console.log(wd);});
         // List the files in the directory
         client.list(function (err, list) {
             // For each file in the list
@@ -147,7 +150,7 @@ var ftpController = function(socket) {
 
     function deleteFile(filename) {
         // Change to the media directory
-        client.cwd('/internal_000/Bebop_2/media', function(err, wd) {console.log(wd);});
+        client.cwd('/internal_000/' + mainFolderName + '/media', function(err, wd) {console.log(wd);});
         console.log('Deleting ' + filename + '...');
         // Delete the file
         client.delete(filename, function(err) {
@@ -171,17 +174,29 @@ var ftpController = function(socket) {
 
     // Initialiser to download thumbnails
     this.downloadThumbnails = function() {
-        // Change to the thumbnailing directory
-        client.cwd('/internal_000/Bebop_2/thumb', function(err, wd) {console.log(wd);});
-        // List the thumbnails
-        client.list(function (err, list) {
-            // Add the thumbnail file names to an array
-            var thumbnails = [];
+        client.cwd('/internal_000', function(err, wd) {console.log(wd);});
+        client.list(function(err, list) {
             for (var i = 0; i < list.length; i++) {
-                thumbnails.push(list[i].name);
+                if (list[i].name.indexOf('Bebop') === 0) {
+                    mainFolderName = list[i].name;
+                    break;
+                }
             }
-            // Start downloading them
-            getFiles(thumbnails, 'static/thumbnails');
+            // Change to the thumbnailing directory
+            client.cwd('/internal_000/' + mainFolderName + '/thumb', function(err, wd) {console.log(wd);});
+            // List the thumbnails
+            client.list(function (err, list) {
+                console.log('Got thumbnails list');
+                if (list.length) {
+                    // Add the thumbnail file names to an array
+                    var thumbnails = [];
+                    for (var i = 0; i < list.length; i++) {
+                        thumbnails.push(list[i].name);
+                    }
+                    // Start downloading them
+                    getFiles(thumbnails, 'static/thumbnails');
+                }
+            });
         });
     };
 
